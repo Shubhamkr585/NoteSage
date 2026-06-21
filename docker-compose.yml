@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:3000" # Maps port 80 on the AWS EC2 instance to 3000 in the container
+    environment:
+      - DATABASE_URL=postgresql://postgres:notesage_secure_pass_123@db:5432/notesage?schema=public
+      # Ensure you pass these environments from the EC2 host or a .env file
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    # Use an image that natively supports pgvector for RAG
+    image: ankane/pgvector:v0.5.1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=notesage_secure_pass_123
+      - POSTGRES_DB=notesage
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:

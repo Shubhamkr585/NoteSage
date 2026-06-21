@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NoteSage - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#22293d",
+                      "surface-container-highest": "#273647",
+                      "on-tertiary-fixed-variant": "#3f465c",
+                      "surface-container-lowest": "#010f1f",
+                      "primary-fixed": "#e9ddff",
+                      "on-surface-variant": "#cbc3d7",
+                      "on-tertiary": "#283044",
+                      "error": "#ffb4ab",
+                      "on-primary": "#3c0091",
+                      "on-error-container": "#ffdad6",
+                      "error-container": "#93000a",
+                      "outline": "#958ea0",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "surface": "#051424",
+                      "inverse-primary": "#6d3bd7",
+                      "primary-fixed-dim": "#d0bcff",
+                      "on-tertiary-fixed": "#131b2e",
+                      "tertiary-fixed-dim": "#bec6e0",
+                      "inverse-surface": "#d4e4fa",
+                      "background": "#051424",
+                      "surface-tint": "#d0bcff",
+                      "on-primary-container": "#340080",
+                      "on-secondary": "#002e6a",
+                      "on-secondary-container": "#e6ecff",
+                      "on-primary-fixed-variant": "#5516be",
+                      "surface-container-high": "#1c2b3c",
+                      "surface-container": "#122131",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-secondary-fixed": "#001a42",
+                      "surface-dim": "#051424",
+                      "outline-variant": "#494454",
+                      "on-background": "#d4e4fa",
+                      "surface-container-low": "#0d1c2d",
+                      "primary-container": "#a078ff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "on-primary-fixed": "#23005c",
+                      "tertiary-fixed": "#dae2fd",
+                      "surface-bright": "#2c3a4c",
+                      "secondary": "#adc6ff",
+                      "surface-variant": "#273647",
+                      "on-surface": "#d4e4fa",
+                      "tertiary-container": "#8990a8",
+                      "secondary-container": "#0566d9",
+                      "on-error": "#690005",
+                      "tertiary": "#bec6e0",
+                      "inverse-on-surface": "#233143",
+                      "primary": "#d0bcff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px",
+                      "unit": "4px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "label-sm": ["Geist"],
+                      "body-sm": ["Inter"],
+                      "display": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "label-md": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #051424;
+            color: #d4e4fa;
+            font-family: 'Inter', sans-serif;
+        }
+        .glass {
+            background: rgba(18, 33, 49, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-darker {
+            background: rgba(5, 20, 36, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .active-tab-indicator {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #d0bcff;
+            box-shadow: 0 0 10px #d0bcff80;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .settings-section {
+            display: none;
+        }
+        .settings-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<!-- Background Animation -->
+<div class="fixed inset-0 z-[-1] opacity-30">
+
+</div>
+<!-- Side Navigation Shell -->
+<aside class="fixed h-full w-[280px] left-0 top-0 bg-slate-900/70 backdrop-blur-xl border-r border-white/10 shadow-sm flex flex-col py-margin-desktop z-50">
+<div class="px-8 mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">NoteSage</h1>
+<p class="text-on-surface-variant font-label-md text-label-md opacity-70">AI Learning Workspace</p>
+</div>
+<nav class="flex-1 space-y-2 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">auto_stories</span>
+<span class="font-label-md text-label-md">Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">science</span>
+<span class="font-label-md text-label-md">Research</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">psychology</span>
+<span class="font-label-md text-label-md">Insights</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary font-bold border-r-2 border-primary bg-white/5" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<div class="glass p-4 rounded-2xl flex items-center gap-3 border border-primary/20">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close up portrait of a professional modern creative person, soft studio lighting, high resolution, minimalist aesthetic, warm skin tones, neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB47ms0VX_xNb7oiphWNk2O3vGkX6FffW53SV-ya8biysKj0mBiV8cXlH7o9G_rBB4cR75_9nyCiUGI3uMnsx_7qHvtHqxEmp3QSbDl7F4UMmCPwnUnWwntgcjpReUUUekGX0j-HOn8Pj0F58yfH4cNfWPJmLda_g7N_QQP6tM2JEz6zqZNMKnif4NXHK9tokSoVLMotvXAGvETVy853DqhzFPvOIzHzhzgAbL4iFU607qUSP-fRywYWQ6ArhDG5-Mh-pP2URW5-lEM"/>
+<div class="overflow-hidden">
+<p class="font-label-md text-label-md truncate">Alex Sterling</p>
+<p class="text-xs text-primary/70">Pro Learner</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/70 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-margin-desktop z-40">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-1 ring-primary/20 w-64 text-on-surface transition-all outline-none" placeholder="Search settings..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="Circular avatar of a digital designer with a sharp gaze, cinematic lighting, ultra-sharp detail, high-end photography, set against a dark textured background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb5bzHWvRxsW39O3DNZ1hMDF_9UMHP-nSas3Bt3M7NoFh8WuG84mMRXv5XBzvJ11aHY2zYlrd4bu2apT8mqrO7Y79-dIRlTwrkuRAjOcobl14CBGb6onHG4WKzrRkJmMs3O8mW_-NKL6zeUOOtFk56YsCDGrbsSyLX8E72idsYlYFAE0ltpNQo2Ww8gitFeb1nT-qXa-Av98zxkENqsyUYaOw12kQHxPc1RTaXtR1ukuF4P5Ax9MlzFOaWANknnGRTvtLsMva2Zypz"/>
+</div>
+</div>
+</header>
+<!-- Main Content Workspace -->
+<main class="ml-[280px] pt-16 min-h-screen">
+<div class="max-w-[1000px] mx-auto px-margin-desktop py-12">
+<header class="mb-12">
+<h2 class="font-headline-lg text-headline-lg mb-2">Settings</h2>
+<p class="text-on-surface-variant font-body-md text-body-md">Manage your NoteSage experience and account preferences.</p>
+</header>
+<!-- Navigation Tabs -->
+<div class="flex gap-8 border-b border-white/10 mb-10 overflow-x-auto whitespace-nowrap scrollbar-hide">
+<button class="tab-btn relative pb-4 font-label-md text-label-md text-primary transition-all flex items-center gap-2 group" id="tab-profile" onclick="switchTab('profile')">
+<span class="material-symbols-outlined text-lg">person</span> Profile
+                    <div class="active-tab-indicator" id="indicator-profile"></div>
+</button>
+<button class="tab-btn relative pb-4 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-2 group" id="tab-theme" onclick="switchTab('theme')">
+<span class="material-symbols-outlined text-lg">palette</span> Appearance
+                    <div class="active-tab-indicator hidden" id="indicator-theme"></div>
+</button>
+<button class="tab-btn relative pb-4 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-2 group" id="tab-notifications" onclick="switchTab('notifications')">
+<span class="material-symbols-outlined text-lg">notifications</span> Notifications
+                    <div class="active-tab-indicator hidden" id="indicator-notifications"></div>
+</button>
+<button class="tab-btn relative pb-4 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-2 group" id="tab-subscription" onclick="switchTab('subscription')">
+<span class="material-symbols-outlined text-lg">payments</span> Subscription
+                    <div class="active-tab-indicator hidden" id="indicator-subscription"></div>
+</button>
+</div>
+<!-- Profile Settings -->
+<section class="settings-section active space-y-12" id="section-profile">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="space-y-2">
+<h3 class="font-headline-md text-headline-md">Personal Information</h3>
+<p class="text-sm text-on-surface-variant">Update your public profile details and how we contact you.</p>
+</div>
+<div class="md:col-span-2 glass rounded-2xl p-8 space-y-6">
+<div class="flex items-center gap-6 pb-6 border-b border-white/5">
+<div class="relative group">
+<img class="w-20 h-20 rounded-full border-2 border-primary/30 object-cover" data-alt="Portrait of a modern scholar, intense focused expression, moody lighting with blue and violet rim lights, highly detailed, professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR-UHZMllBt0pyw6GmMRxiuXx-R9EtLCbmAoiVYZqtZ4vRCHgeZsStA6rpQqWyhX1PGNAn30-tYYVssm3B81Xgec16D_rTkCAAjFdIPU_fSwrfy-AIMcExXN5yNKWcQzE5RsipCxdbex-cCmy9gK2_zKkE6Toj60KH2u1g_uiGxiYI8y2TAGuqV_A36bxBZ71QBHl6p3CR4nhwrcwDORTpdyJ37DgG52qj9dEao8ZWPVd2Jj9tA3pZjfTZPKSiCXPL_ODznUWuVy-e"/>
+<button class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">photo_camera</span>
+</button>
+</div>
+<div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:brightness-110 transition-all">Change Avatar</button>
+<p class="text-xs text-on-surface-variant mt-2">JPG, GIF or PNG. Max size of 800K</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm block opacity-70">Full Name</label>
+<input class="w-full bg-surface-container border-b border-outline-variant focus:border-primary px-0 py-2 outline-none transition-all text-body-md font-body-md" type="text" value="Alex Sterling"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm block opacity-70">Email Address</label>
+<input class="w-full bg-surface-container border-b border-outline-variant focus:border-primary px-0 py-2 outline-none transition-all text-body-md font-body-md" type="email" value="alex.sterling@notesage.ai"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm block opacity-70">Bio</label>
+<textarea class="w-full bg-surface-container border-b border-outline-variant focus:border-primary px-0 py-2 outline-none transition-all text-body-md font-body-md resize-none" rows="3">Strategic design student focusing on cognitive psychology and knowledge management systems.</textarea>
+</div>
+</div>
+</div>
+</section>
+<!-- Theme Settings -->
+<section class="settings-section space-y-12" id="section-theme">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="space-y-2">
+<h3 class="font-headline-md text-headline-md">Interface Theme</h3>
+<p class="text-sm text-on-surface-variant">Customize the look and feel of your learning environment.</p>
+</div>
+<div class="md:col-span-2 glass rounded-2xl p-8">
+<div class="grid grid-cols-2 gap-4 mb-10">
+<button class="border-2 border-primary bg-slate-900 rounded-xl p-4 flex flex-col items-center gap-3 transition-all">
+<div class="w-full h-20 bg-slate-800 rounded flex gap-2 p-2 overflow-hidden">
+<div class="w-4 h-full bg-primary rounded-sm opacity-40"></div>
+<div class="flex-1 space-y-2">
+<div class="w-full h-2 bg-white/10 rounded"></div>
+<div class="w-3/4 h-2 bg-white/10 rounded"></div>
+</div>
+</div>
+<span class="font-label-md text-label-md">Dark Mode</span>
+</button>
+<button class="border border-white/10 bg-white/5 rounded-xl p-4 flex flex-col items-center gap-3 hover:bg-white/10 transition-all">
+<div class="w-full h-20 bg-slate-100 rounded flex gap-2 p-2 overflow-hidden">
+<div class="w-4 h-full bg-primary rounded-sm opacity-60"></div>
+<div class="flex-1 space-y-2">
+<div class="w-full h-2 bg-slate-300 rounded"></div>
+<div class="w-3/4 h-2 bg-slate-300 rounded"></div>
+</div>
+</div>
+<span class="font-label-md text-label-md">Light Mode</span>
+</button>
+</div>
+<div class="space-y-4">
+<label class="font-label-sm text-label-sm block opacity-70">Accent Color</label>
+<div class="flex gap-4">
+<button class="w-8 h-8 rounded-full bg-[#d0bcff] ring-2 ring-white ring-offset-2 ring-offset-background"></button>
+<button class="w-8 h-8 rounded-full bg-[#adc6ff] opacity-60 hover:opacity-100 transition-opacity"></button>
+<button class="w-8 h-8 rounded-full bg-[#bec6e0] opacity-60 hover:opacity-100 transition-opacity"></button>
+<button class="w-8 h-8 rounded-full bg-[#ffb4ab] opacity-60 hover:opacity-100 transition-opacity"></button>
+<button class="w-8 h-8 rounded-full bg-[#6d3bd7] opacity-60 hover:opacity-100 transition-opacity"></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Notifications Settings -->
+<section class="settings-section space-y-12" id="section-notifications">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="space-y-2">
+<h3 class="font-headline-md text-headline-md">Notification Channels</h3>
+<p class="text-sm text-on-surface-variant">Stay updated on your learning milestones and AI insights.</p>
+</div>
+<div class="md:col-span-2 glass rounded-2xl p-8 space-y-6">
+<div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">mail</span>
+<div>
+<p class="font-label-md text-label-md">Email Notifications</p>
+<p class="text-xs text-on-surface-variant">Daily digest and security alerts</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">notifications_active</span>
+<div>
+<p class="font-label-md text-label-md">Push Notifications</p>
+<p class="text-xs text-on-surface-variant">Direct alerts in your browser</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">rocket_launch</span>
+<div>
+<p class="font-label-md text-label-md">Product Updates</p>
+<p class="text-xs text-on-surface-variant">New AI features and learning tips</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Subscription Settings -->
+<section class="settings-section space-y-12" id="section-subscription">
+<!-- Current Plan Hero -->
+<div class="glass overflow-hidden rounded-3xl border border-primary/30 relative">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] -mr-32 -mt-32"></div>
+<div class="p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+<div class="space-y-4">
+<span class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Active Plan</span>
+<h3 class="text-4xl font-headline-lg font-bold">NoteSage Pro</h3>
+<p class="text-on-surface-variant font-body-md max-w-md">Enjoy unlimited AI insights, connected graph visualizations, and priority processing speeds.</p>
+<div class="flex items-center gap-8 pt-4">
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-tighter opacity-60">Renews on</p>
+<p class="font-bold">Oct 24, 2024</p>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-tighter opacity-60">Price</p>
+<p class="font-bold">$12.00 / mo</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3 w-full md:w-auto">
+<button class="bg-primary text-on-primary font-bold px-8 py-3 rounded-xl hover:scale-105 transition-transform">Upgrade to Ultimate</button>
+<button class="bg-white/5 border border-white/10 text-on-surface px-8 py-3 rounded-xl hover:bg-white/10 transition-colors">Manage Billing</button>
+</div>
+</div>
+</div>
+<!-- Billing History -->
+<div class="space-y-6">
+<h3 class="font-headline-md text-headline-md">Billing History</h3>
+<div class="glass rounded-2xl overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-white/5">
+<tr>
+<th class="px-6 py-4 font-label-md text-label-md opacity-60">Date</th>
+<th class="px-6 py-4 font-label-md text-label-md opacity-60">Invoice</th>
+<th class="px-6 py-4 font-label-md text-label-md opacity-60">Amount</th>
+<th class="px-6 py-4 font-label-md text-label-md opacity-60">Status</th>
+<th class="px-6 py-4 font-label-md text-label-md opacity-60 text-right">Receipt</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr>
+<td class="px-6 py-4 text-sm">Sep 24, 2023</td>
+<td class="px-6 py-4 text-sm font-mono opacity-80">INV-82910</td>
+<td class="px-6 py-4 text-sm">$12.00</td>
+<td class="px-6 py-4"><span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Paid</span></td>
+<td class="px-6 py-4 text-right"><button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">download</button></td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-sm">Aug 24, 2023</td>
+<td class="px-6 py-4 text-sm font-mono opacity-80">INV-82755</td>
+<td class="px-6 py-4 text-sm">$12.00</td>
+<td class="px-6 py-4"><span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Paid</span></td>
+<td class="px-6 py-4 text-right"><button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">download</button></td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-sm">Jul 24, 2023</td>
+<td class="px-6 py-4 text-sm font-mono opacity-80">INV-82601</td>
+<td class="px-6 py-4 text-sm">$12.00</td>
+<td class="px-6 py-4"><span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-[10px] font-bold uppercase">Paid</span></td>
+<td class="px-6 py-4 text-right"><button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">download</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Bottom Action Bar (Fixed on scroll for sections with many inputs) -->
+<div class="sticky bottom-8 mt-12 flex justify-end gap-4 p-4 glass rounded-2xl z-20">
+<button class="px-6 py-2 rounded-xl text-on-surface-variant hover:text-on-surface transition-colors font-label-md text-label-md">Discard Changes</button>
+<button class="px-8 py-2 rounded-xl bg-primary text-on-primary font-bold shadow-lg shadow-primary/20 hover:brightness-110 transition-all font-label-md text-label-md">Save Preferences</button>
+</div>
+</div>
+</main>
+<script>
+        function switchTab(tabId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.settings-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Show current section
+            document.getElementById('section-' + tabId).classList.add('active');
+
+            // Update tab styles
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => {
+                tab.classList.remove('text-primary');
+                tab.classList.add('text-on-surface-variant');
+            });
+
+            const activeTab = document.getElementById('tab-' + tabId);
+            activeTab.classList.remove('text-on-surface-variant');
+            activeTab.classList.add('text-primary');
+
+            // Update indicators
+            const indicators = document.querySelectorAll('.active-tab-indicator');
+            indicators.forEach(indicator => indicator.classList.add('hidden'));
+            document.getElementById('indicator-' + tabId).classList.remove('hidden');
+
+            // Smooth scroll to top of settings content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Add subtle hover effect logic
+        const buttons = document.querySelectorAll('button, a');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = btn.classList.contains('active-tab-indicator') ? '' : 'scale(1.02)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

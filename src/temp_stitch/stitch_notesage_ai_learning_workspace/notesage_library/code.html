@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NoteSage | Document Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#8990a8",
+                        "surface-variant": "#273647",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "tertiary-fixed": "#dae2fd",
+                        "on-secondary": "#002e6a",
+                        "on-primary": "#3c0091",
+                        "on-error": "#690005",
+                        "on-tertiary": "#283044",
+                        "on-primary-fixed-variant": "#5516be",
+                        "surface-dim": "#051424",
+                        "on-surface-variant": "#cbc3d7",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-container-high": "#1c2b3c",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#273647",
+                        "surface-container-low": "#0d1c2d",
+                        "inverse-on-surface": "#233143",
+                        "on-secondary-container": "#e6ecff",
+                        "on-primary-fixed": "#23005c",
+                        "secondary-container": "#0566d9",
+                        "tertiary": "#bec6e0",
+                        "primary": "#d0bcff",
+                        "surface-container-lowest": "#010f1f",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-surface": "#d4e4fa",
+                        "surface-bright": "#2c3a4c",
+                        "error-container": "#93000a",
+                        "primary-fixed": "#e9ddff",
+                        "secondary": "#adc6ff",
+                        "on-tertiary-container": "#22293d",
+                        "inverse-surface": "#d4e4fa",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "outline-variant": "#494454",
+                        "surface": "#051424",
+                        "background": "#051424",
+                        "on-tertiary-fixed": "#131b2e",
+                        "primary-container": "#a078ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "inverse-primary": "#6d3bd7",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#340080",
+                        "surface-container": "#122131",
+                        "primary-fixed-dim": "#d0bcff",
+                        "outline": "#958ea0",
+                        "surface-tint": "#d0bcff",
+                        "error": "#ffb4ab",
+                        "on-background": "#d4e4fa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Geist"],
+                        "display": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #051424;
+            color: #d4e4fa;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(18, 33, 49, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .sidebar-active {
+            color: #d0bcff;
+            font-weight: 700;
+            border-right: 2px solid #d0bcff;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .gradient-button {
+            background: linear-gradient(135deg, #a078ff 0%, #6d3bd7 100%);
+            transition: all 0.3s ease;
+        }
+        .gradient-button:hover {
+            box-shadow: 0 0 20px rgba(160, 120, 255, 0.4);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-slate-900/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-white/10 flex flex-col py-8 px-6 z-50">
+<div class="mb-10">
+<h1 class="text-headline-md font-headline-md font-bold text-primary tracking-tight">NoteSage</h1>
+<p class="font-body-sm text-on-surface-variant opacity-70">AI Workspace</p>
+</div>
+<button class="gradient-button flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-white font-label-md mb-8">
+<span class="material-symbols-outlined text-base">add</span>
+            New Project
+        </button>
+<nav class="flex-1 space-y-2 font-body-md text-body-md">
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-primary font-bold border-r-2 border-primary bg-white/5" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                Library
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+                Research
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Insights
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="mt-auto space-y-2">
+<div class="flex items-center gap-3 p-3 glass-panel rounded-xl mb-4">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold">JD</div>
+<div>
+<p class="font-label-md text-on-surface">John Doe</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Pro Plan</p>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 text-on-surface-variant font-medium hover:text-primary transition-colors cursor-pointer text-sm">
+<span class="material-symbols-outlined text-sm">help_outline</span>
+                Help
+            </div>
+<div class="flex items-center gap-4 px-4 text-on-surface-variant font-medium hover:text-primary transition-colors cursor-pointer text-sm">
+<span class="material-symbols-outlined text-sm">security</span>
+                Privacy
+            </div>
+</div>
+</aside>
+<!-- Main Workspace Content -->
+<main class="ml-[280px] w-[calc(100%-280px)] h-screen overflow-y-auto custom-scrollbar relative">
+<!-- Top Nav Bar Shell -->
+<header class="sticky top-0 w-full z-40 bg-surface/70 dark:bg-surface/70 backdrop-blur-md border-b border-white/10 flex justify-between items-center h-16 px-margin-desktop">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-label-md focus:ring-2 focus:ring-primary/20 transition-all text-on-surface placeholder:text-on-surface-variant/40" placeholder="Search library, tags, or summaries..." type="text"/>
+</div>
+<button class="ml-4 p-2 rounded-full hover:bg-white/5 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="max-w-[1200px] mx-auto px-margin-desktop py-8">
+<!-- Breadcrumbs & Actions -->
+<div class="flex justify-between items-end mb-10">
+<div>
+<nav class="flex items-center gap-2 text-label-sm text-on-surface-variant/60 mb-2 font-label-sm">
+<span>Library</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary/80">Research Materials</span>
+</nav>
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Document Library</h2>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-label-md font-label-md text-on-surface">
+<span class="material-symbols-outlined text-lg">note_add</span>
+                        New Note
+                    </button>
+<button class="gradient-button flex items-center gap-2 px-6 py-2.5 rounded-xl text-label-md font-label-md text-white">
+<span class="material-symbols-outlined text-lg">upload_file</span>
+                        Upload PDF
+                    </button>
+</div>
+</div>
+<!-- Categories / Folders Chips -->
+<div class="flex gap-3 mb-10 overflow-x-auto pb-2 custom-scrollbar">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap">All Sources</button>
+<button class="px-5 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors whitespace-nowrap">Neural Networks</button>
+<button class="px-5 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors whitespace-nowrap">Quantum Computing</button>
+<button class="px-5 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors whitespace-nowrap">Cognitive Science</button>
+<button class="px-5 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors whitespace-nowrap">History of AI</button>
+<button class="px-2 py-2 rounded-full text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<!-- Pinned Section -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">push_pin</span>
+                        Pinned
+                    </h3>
+<button class="text-primary text-label-md hover:underline">See all</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Pinned Card 1 -->
+<div class="glass-panel rounded-2xl overflow-hidden group cursor-pointer transition-all hover:translate-y-[-4px]">
+<div class="h-40 bg-surface-container-low relative overflow-hidden">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" data-alt="A macro photograph of an open academic journal with sharp focus on complex mathematical equations and highlighted text sections. The scene is bathed in a cool, professional blue and slate lighting, creating a sophisticated intellectual atmosphere with soft bokeh in the background. The aesthetic is clean, academic, and modern." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC2QK7wDV_2SqvtQsu8nwMrmHSWHW4_q0YHpzx6bwxidOq9fsinvcUOsI7lxI5rMgaRrBYp7-4axIabEBOxS_8eZnigBulZBIsBd5YQVbf8m4KZMqQpIgww0Ns_PmCKFu2bxLYmknv0foCv6yx9V-73BD-n7f00K_0BO0kefX4xsVqS-m5oSINRYugAO_06SjfPPZYJ6Tzn8OruE4WBJe_vGgH03VxC7fijLAHwezSfpSPBjo6stA3uwxHIyeWfdkWw0cHGOKhvFIJG')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim to-transparent opacity-60"></div>
+<div class="absolute top-3 right-3 flex gap-2">
+<span class="bg-primary/20 backdrop-blur-md text-primary text-[10px] px-2 py-1 rounded-full uppercase font-bold tracking-widest">PDF</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline-md text-lg text-on-surface mb-2 line-clamp-1">Attention is All You Need</h4>
+<p class="text-on-surface-variant text-sm line-clamp-2 mb-4 opacity-70">A groundbreaking research paper introducing the Transformer architecture, fundamentally changing NLP tasks...</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+<span class="text-[10px] font-label-sm text-on-surface-variant ml-4 whitespace-nowrap">85% read</span>
+</div>
+</div>
+</div>
+<!-- Pinned Card 2 -->
+<div class="glass-panel rounded-2xl overflow-hidden group cursor-pointer transition-all hover:translate-y-[-4px]">
+<div class="h-40 bg-surface-container-low relative overflow-hidden">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" data-alt="An abstract visualization of a neural network with glowing purple and cyan nodes connected by delicate, crystalline lines. The background is a dark charcoal slate, emphasizing the luminous data points. The lighting is ethereal and focused, symbolizing high-stakes artificial intelligence research and cognitive mapping in a premium digital workspace." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAGK--sxr6ivRzmu_LcyOxNNtwozJGWePM3fGEKTsgvl3mQ1mIcGQOoUBO4PfEtBKcVy1PQfcmGssurbSPQ7E0nPpnllj2o23TqXcQbjd6hgHVnrcV1XeQ76chZKrN3ReO5yCuBrnZ_GBOdacH-kQ-kg9twfSZk_dF5XpJWx9wIp3HmV-9jNuhM0bYqELbCz2PNKLURsdkiY96u3nsNoRenEzjxp99atjUIuUeYT0mV1JqjB4aFu_-yURXuWPlibI3sX5tY4jINTmY-')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim to-transparent opacity-60"></div>
+<div class="absolute top-3 right-3 flex gap-2">
+<span class="bg-secondary/20 backdrop-blur-md text-secondary text-[10px] px-2 py-1 rounded-full uppercase font-bold tracking-widest">Article</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline-md text-lg text-on-surface mb-2 line-clamp-1">The Future of Large Language Models</h4>
+<p class="text-on-surface-variant text-sm line-clamp-2 mb-4 opacity-70">AI Summary: Exploring the scaling laws and emergent behaviors in multi-billion parameter models...</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[40%]"></div>
+</div>
+<span class="text-[10px] font-label-sm text-on-surface-variant ml-4 whitespace-nowrap">40% read</span>
+</div>
+</div>
+</div>
+<!-- Pinned Card 3 -->
+<div class="glass-panel rounded-2xl overflow-hidden group cursor-pointer transition-all hover:translate-y-[-4px]">
+<div class="h-40 bg-surface-container-low relative overflow-hidden">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" data-alt="A clean, minimalist high-key top-down shot of a sleek modern laptop and a digital tablet showing a node graph. The color palette is composed of soft grays, whites, and subtle lavender accents. The mood is calm, organized, and technologically advanced, reflecting a focused learning environment with high cognitive clarity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDJMCYnP7VVfJdw5PLJTAhN-UCXTjqPJZ038s7YlhGRSz8VTA9nO1XEBxjCsaD2lL334cVy-5YdJMB7KiZsVK0dvAh7Hdguo7AAB_8Ubl1pBcG11mw8R9Tm8_-0s6Y4kigg6w48zFAVGwgDz4YbjZqAts2bOtLIgUUvSJ7Xi8xPDswqPiFdiZ75EXLr0zPoTdijXMgjaU9o3ze6S1zuqqlmQVaApZj8zLA7ZToFFFu3xLsKdab96otZaLC61DohDq1Ii2pqg37nglbc')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim to-transparent opacity-60"></div>
+<div class="absolute top-3 right-3 flex gap-2">
+<span class="bg-tertiary/20 backdrop-blur-md text-tertiary text-[10px] px-2 py-1 rounded-full uppercase font-bold tracking-widest">Note</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline-md text-lg text-on-surface mb-2 line-clamp-1">Seminar Notes: Ethics in Robotics</h4>
+<p class="text-on-surface-variant text-sm line-clamp-2 mb-4 opacity-70">Personal notes from the MIT 2024 symposium on human-robot interaction and ethical frameworks...</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[100%]"></div>
+</div>
+<span class="text-[10px] font-label-sm text-on-surface-variant ml-4 whitespace-nowrap">Complete</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Documents (List View) -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Recent Materials</h3>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg bg-surface-container text-primary">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">list</span>
+</button>
+</div>
+</div>
+<div class="space-y-3">
+<!-- List Item 1 -->
+<div class="glass-panel p-4 rounded-xl flex items-center gap-6 group hover:bg-white/[0.04] transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<div class="flex-1 min-w-0">
+<h5 class="font-label-md text-on-surface text-base truncate">Quantum Supremacy Revisited</h5>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+                                    Updated 2h ago
+                                </span>
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">sell</span>
+                                    Physics, Quantum
+                                </span>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-lg bg-surface-container-lowest border border-white/5">
+<span class="material-symbols-outlined text-primary text-sm">auto_awesome</span>
+<span class="text-[11px] text-on-surface-variant font-medium">AI Insights Ready</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="glass-panel p-4 rounded-xl flex items-center gap-6 group hover:bg-white/[0.04] transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+</div>
+<div class="flex-1 min-w-0">
+<h5 class="font-label-md text-on-surface text-base truncate">Statistical Analysis of Gene Sequences</h5>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+                                    Updated Yesterday
+                                </span>
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">sell</span>
+                                    Genetics, Data
+                                </span>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-lg bg-surface-container-lowest border border-white/5 opacity-50">
+<span class="material-symbols-outlined text-primary text-sm">hourglass_empty</span>
+<span class="text-[11px] text-on-surface-variant font-medium">Summarizing...</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="glass-panel p-4 rounded-xl flex items-center gap-6 group hover:bg-white/[0.04] transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-tertiary">edit_note</span>
+</div>
+<div class="flex-1 min-w-0">
+<h5 class="font-label-md text-on-surface text-base truncate">Notes on Architectural Patterns</h5>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+                                    Updated Oct 24
+                                </span>
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">sell</span>
+                                    Software, Architecture
+                                </span>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-lg bg-surface-container-lowest border border-white/5">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="text-[11px] text-on-surface-variant font-medium">High Confidence Summary</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Floating Action Component (Only shown when browsing) -->
+<div class="fixed bottom-10 right-10 flex flex-col gap-3">
+<button class="w-14 h-14 rounded-full gradient-button text-white flex items-center justify-center shadow-2xl relative group" id="ai-assistant-fab">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="absolute right-full mr-4 bg-slate-900 border border-white/10 px-3 py-1.5 rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Ask AI Assistant</span>
+</button>
+</div>
+</main>
+<!-- Contextual Sidebar (Knowledge Graph / Quick Insights) -->
+<aside class="w-[320px] h-full glass-panel border-l border-white/10 p-6 hidden xl:block custom-scrollbar overflow-y-auto">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Knowledge Graph</h3>
+<div class="h-64 rounded-2xl bg-surface-container-low border border-white/5 mb-8 flex items-center justify-center relative overflow-hidden group">
+<!-- Simulated Graph Component -->
+<div class="absolute inset-0 opacity-40">
+<div class="absolute w-2 h-2 rounded-full bg-primary top-1/4 left-1/3 blur-[1px]"></div>
+<div class="absolute w-3 h-3 rounded-full bg-secondary top-1/2 left-1/2 blur-[1px]"></div>
+<div class="absolute w-2 h-2 rounded-full bg-tertiary bottom-1/3 right-1/4 blur-[1px]"></div>
+<svg class="absolute inset-0 w-full h-full">
+<line stroke="rgba(255,255,255,0.1)" stroke-width="1" x1="33%" x2="50%" y1="25%" y2="50%"></line>
+<line stroke="rgba(255,255,255,0.1)" stroke-width="1" x1="50%" x2="75%" y1="50%" y2="66%"></line>
+</svg>
+</div>
+<div class="text-center z-10 p-4">
+<p class="text-xs text-on-surface-variant font-medium">Graph visualization active.</p>
+<button class="mt-2 text-primary text-[10px] uppercase font-bold tracking-widest hover:underline">Expand View</button>
+</div>
+<div class="absolute inset-0 bg-primary/5 group-hover:opacity-100 opacity-0 transition-opacity pointer-events-none"></div>
+</div>
+<h4 class="font-label-md text-on-surface mb-4">Topic Clusters</h4>
+<div class="space-y-4">
+<div class="p-3 glass-panel rounded-xl border-l-4 border-primary">
+<p class="text-xs font-bold text-primary mb-1 uppercase tracking-tighter">High Relevance</p>
+<p class="text-sm font-label-md text-on-surface">Transformers &amp; Attention</p>
+<p class="text-[11px] text-on-surface-variant mt-1">12 interconnected documents found.</p>
+</div>
+<div class="p-3 glass-panel rounded-xl border-l-4 border-secondary">
+<p class="text-xs font-bold text-secondary mb-1 uppercase tracking-tighter">Emergent Thread</p>
+<p class="text-sm font-label-md text-on-surface">Quantum Error Correction</p>
+<p class="text-[11px] text-on-surface-variant mt-1">Found in recent IEEE uploads.</p>
+</div>
+</div>
+<div class="mt-12">
+<h4 class="font-label-md text-on-surface mb-4">Recent Collaborators</h4>
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-primary-container flex items-center justify-center text-[10px] font-bold text-on-primary-container">AS</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-secondary-container flex items-center justify-center text-[10px] font-bold text-on-secondary-container">BK</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-tertiary-container flex items-center justify-center text-[10px] font-bold text-on-tertiary-container">CL</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-surface-container-highest flex items-center justify-center text-[10px] font-bold text-on-surface-variant">+4</div>
+</div>
+</div>
+</aside>
+<script>
+        // Micro-interaction for FAB breathing effect
+        const fab = document.getElementById('ai-assistant-fab');
+        if (fab) {
+            setInterval(() => {
+                fab.classList.add('scale-105');
+                setTimeout(() => fab.classList.remove('scale-105'), 1000);
+            }, 3000);
+        }
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>

@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { DocType } from "@prisma/client";
+import { processDocument } from "@/server/services/document-processor";
 
 export async function getUserDocuments() {
   const session = await auth.api.getSession({
@@ -31,7 +32,7 @@ export async function deleteDocument(id: string) {
   });
   if (!session || !session.user?.id) throw new Error("Unauthorized");
 
-  await db.document.delete({
+  await db.document.deleteMany({
     where: { id, userId: session.user.id },
   });
 
@@ -44,7 +45,7 @@ export async function createDocument(title: string, s3Key: string, type: DocType
   });
   if (!session || !session.user?.id) throw new Error("Unauthorized");
 
-  await db.document.create({
+  const doc = await db.document.create({
     data: {
       title,
       s3Key,
@@ -53,5 +54,15 @@ export async function createDocument(title: string, s3Key: string, type: DocType
     },
   });
 
+  // Start document processing asynchronously in the background to prevent timeouts
+  processDocument(doc.id)
+    .then((res) => {
+      console.log(`[Ingestion] Async document processing succeeded for document ${doc.id}:`, res);
+    })
+    .catch((err) => {
+      console.error(`[Ingestion] Async document processing failed for document ${doc.id}:`, err);
+    });
+
   revalidatePath("/documents");
+  return doc;
 }

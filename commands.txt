@@ -1,0 +1,464 @@
+Document Ingestion
+First question:
+What kinds of documents will users upload?
+Examples:
+PDFs
+Notes
+DOCX
+Markdown
+HTML
+Slides
+Each requires different processing.
+Common Mistake
+Extracting raw text and ignoring structure.
+Bad:
+
+Chapter 1
+Memory Management
+...
+Page 2
+...
+
+Good:
+
+{
+  "title":"Memory Management",
+  "page":2,
+  "section":"Virtual Memory",
+  "content":"..."
+}
+
+Preserve:
+
+Page number
+Headings
+Sections
+Tables
+Lists
+
+because citations depend on them.
+
+2. Chunking Strategy
+
+This is the most important part of RAG.
+
+A chunk is the unit that gets embedded.
+
+Bad chunk:
+
+5000 words
+
+Too large.
+
+Bad chunk:
+
+10 words
+
+Too small.
+
+Fixed Chunking
+500 characters
+
+Simple but often poor.
+
+Semantic Chunking
+
+Split based on:
+
+Heading
+Subheading
+Paragraph
+
+Example:
+
+Virtual Memory
+    ↓
+Chunk 1
+
+Page Replacement
+    ↓
+Chunk 2
+
+Usually better.
+
+Overlap
+
+Without overlap:
+
+Chunk A
+Chunk B
+
+Information at boundaries gets lost.
+
+Use:
+
+Chunk A
+
+last 100 tokens
+
+Chunk B
+
+Typical:
+
+Chunk Size:
+500-1000 tokens
+
+Overlap:
+100-200 tokens
+3. Metadata Design
+
+Don't only store text.
+
+Store:
+
+{
+  "userId":"",
+  "documentId":"",
+  "documentName":"",
+  "pageNumber":14,
+  "section":"Virtual Memory",
+  "chunkId":""
+}
+
+Metadata enables:
+
+Filtering
+Citations
+Multi-document search
+4. Embeddings
+
+Embedding converts text into vectors.
+
+"Virtual Memory"
+      ↓
+[0.12,0.93,...]
+
+Important question:
+
+Which embedding model?
+
+For NoteSage:
+
+Gemini Embeddings is reasonable.
+
+Important Rule
+
+Use the same embedding model for:
+
+Documents
+Queries
+
+Otherwise similarity becomes meaningless.
+
+5. Vector Storage
+
+Common options:
+
+PostgreSQL + pgvector
+
+Great for portfolio projects.
+
+Pros:
+
+Simpler architecture
+One database
+Easier deployment
+Pinecone
+
+Managed vector DB.
+
+Weaviate
+Qdrant
+
+Very popular nowadays.
+
+For NoteSage:
+
+Postgres
++
+pgvector
+
+is enough.
+
+6. Retrieval
+
+This determines answer quality more than the LLM.
+
+Many people think:
+
+Better LLM
+=
+Better RAG
+
+Wrong.
+
+Usually:
+
+Better Retrieval
+=
+Better Answer
+Top K
+
+Retrieve:
+
+Top 5 chunks
+
+or
+
+Top 10 chunks
+
+Not:
+
+Top 100
+
+Context becomes noisy.
+
+Similarity Search
+
+Most common:
+
+ORDER BY embedding <=> query_embedding
+7. Hybrid Search
+
+Very important.
+
+Vector search can fail.
+
+Example:
+
+User asks:
+
+What is TCP?
+
+Document contains:
+
+Transmission Control Protocol
+
+Sometimes semantic search misses exact keywords.
+
+Use:
+
+Vector Search
++
+Keyword Search
+
+This is called:
+
+Hybrid Search
+
+Used heavily in production.
+
+
+
+Reranking often improves quality more than upgrading models.
+
+9. Context Construction
+
+Never dump chunks blindly.
+
+Bad:
+
+Chunk1
+Chunk2
+Chunk3
+Chunk4
+
+Good:
+
+Source: OS.pdf Page 10
+
+Chunk1
+
+Source: OS.pdf Page 11
+
+Chunk2
+
+Provide structure.
+
+10. Hallucination Prevention
+
+Critical.
+
+Prompt should say:
+
+Answer ONLY using supplied context.
+
+If context does not contain the answer,
+say:
+"I could not find that information
+in the uploaded documents."
+
+Never let the model guess.
+
+11. Citations
+
+Your NoteSage project specifically needs this.
+
+Store:
+
+{
+  "page":14,
+  "document":"OperatingSystems.pdf"
+}
+
+When retrieval returns chunks:
+
+Chunk A
+Page 14
+
+Chunk B
+Page 16
+
+Attach sources to final answer.
+
+Example:
+
+Virtual memory allows...
+
+Sources:
+OS.pdf Page 14
+OS.pdf Page 16
+12. Multi-Document Reasoning
+
+Harder than normal RAG.
+
+Question:
+
+Compare DBMS indexing
+and OS page caching.
+
+Need retrieval from:
+
+DBMS.pdf
++
+OS.pdf
+
+Then synthesis.
+
+Pipeline:
+
+Query
+↓
+Retrieve from all docs
+↓
+Group sources
+↓
+Build context
+↓
+LLM comparison
+13. Conversational Memory
+
+Without memory:
+
+Q1:
+What is Virtual Memory?
+
+Q2:
+Explain its advantages.
+
+The word "its" breaks retrieval.
+
+Need:
+
+Conversation History
++
+Current Query
+
+Often generate:
+
+Standalone Question
+
+before retrieval.
+
+Example:
+
+Explain advantages of Virtual Memory.
+14. Cost Optimization
+
+Very important.
+
+Don't generate embeddings repeatedly.
+
+Store:
+
+File Hash
+
+If same file uploaded again:
+
+Reuse embeddings
+15. Security
+
+Never allow:
+
+User A
+
+to retrieve:
+
+User B's chunks
+
+Every retrieval query should include:
+
+WHERE user_id = ?
+
+This is one of the biggest SaaS RAG mistakes.
+
+16. Evaluation
+
+How do you know RAG is working?
+
+Measure:
+
+Retrieval Quality
+
+Did correct chunks get retrieved?
+
+Answer Quality
+
+Did answer match sources?
+
+Citation Accuracy
+
+Were citations correct?
+
+Hallucination Rate
+
+How often model invents facts?
+
+Architecture I'd Use For NoteSage
+Upload PDF
+      ↓
+PDF Parser
+      ↓
+Semantic Chunker
+      ↓
+Embeddings
+      ↓
+Postgres + pgvector
+
+User Question
+      ↓
+Query Embedding
+      ↓
+Hybrid Search
+      ↓
+Top 20 Chunks
+      ↓
+Rerank
+      ↓
+Top 5 Chunks
+      ↓
+Context Builder
+      ↓
+Gemini 2.5 Flash
+      ↓
+Grounded Answer
+      ↓
+Source Citations
+
+For a portfolio-quality NoteSage, the biggest differentiators are:
+
+Good chunking
+Hybrid search
+Multi-document reasoning
+Accurate citations
+Conversation-aware retrieval

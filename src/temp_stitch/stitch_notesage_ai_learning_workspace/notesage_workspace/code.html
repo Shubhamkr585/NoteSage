@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NoteSage | AI Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#d8e2ff",
+                    "secondary-container": "#0566d9",
+                    "surface-container-highest": "#273647",
+                    "surface-bright": "#2c3a4c",
+                    "on-primary-fixed-variant": "#5516be",
+                    "on-primary-fixed": "#23005c",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container": "#122131",
+                    "on-secondary-container": "#e6ecff",
+                    "inverse-primary": "#6d3bd7",
+                    "on-background": "#d4e4fa",
+                    "on-primary": "#3c0091",
+                    "outline-variant": "#494454",
+                    "on-secondary": "#002e6a",
+                    "surface-container-lowest": "#010f1f",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-tertiary": "#283044",
+                    "on-tertiary-fixed": "#131b2e",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "on-primary-container": "#340080",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "on-surface": "#d4e4fa",
+                    "secondary": "#adc6ff",
+                    "surface-container-low": "#0d1c2d",
+                    "surface-variant": "#273647",
+                    "surface-tint": "#d0bcff",
+                    "primary-container": "#a078ff",
+                    "surface-container-high": "#1c2b3c",
+                    "error-container": "#93000a",
+                    "on-error-container": "#ffdad6",
+                    "error": "#ffb4ab",
+                    "tertiary-container": "#8990a8",
+                    "on-tertiary-container": "#22293d",
+                    "inverse-on-surface": "#233143",
+                    "surface-dim": "#051424",
+                    "tertiary-fixed": "#dae2fd",
+                    "tertiary": "#bec6e0",
+                    "on-error": "#690005",
+                    "primary-fixed": "#e9ddff",
+                    "background": "#051424",
+                    "outline": "#958ea0",
+                    "primary": "#d0bcff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface": "#051424",
+                    "primary-fixed-dim": "#d0bcff",
+                    "on-surface-variant": "#cbc3d7",
+                    "inverse-surface": "#d4e4fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "unit": "4px",
+                    "gutter": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Geist"],
+                    "label-sm": ["Geist"],
+                    "headline-lg-mobile": ["Geist"],
+                    "display": ["Geist"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Geist"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Geist"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-tab {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 right-0 w-[calc(100%-280px)] z-40 bg-surface/70 backdrop-blur-md border-b border-white/10 flex justify-between items-center h-16 px-margin-desktop">
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full border border-white/5 w-80 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-full placeholder:text-on-surface-variant/50" placeholder="Search knowledge..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-8 w-[1px] bg-white/10 mx-2"></div>
+<div class="flex items-center gap-3">
+<span class="text-label-md font-label-md text-on-surface-variant">Dr. Aris Thorne</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/30">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a clean-shaven male scholar in his early 40s, wearing minimalist glasses and a dark slate turtleneck. The background is a soft-focus library with blue and violet ambient lighting, following a high-fidelity glassmorphism aesthetic. The lighting is dramatic yet professional, emphasizing intelligence and depth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCMnZZ9clBk-30HcHqtcTW7UgiVSo6uc7KvJCMWB7Pqmjcb-GK6G2lv8AoASvHTnBfxg1hMDvu15TUUFHHPMAXzauNg91b05hM8o0s8ny28LBT0E0rpGWK2uW3-NGPWZX7uJF-I_IP4GsAQLxhHy3czSngv-KfcuLns-8NFBb9tcjajLYhV2xqh_0tAQRqJePU-Z-UiSf3z9AUDxeWKFddeugu6iWnOrKoV6ePKSewCaIPJ5eSh33539gPpbMszr7JiEIcgaOXm9Zg"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-slate-900/70 backdrop-blur-xl border-r border-white/10 flex flex-col h-full py-8 px-6 z-50">
+<div class="mb-10">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">NoteSage</h1>
+<p class="text-on-surface-variant text-label-sm mt-1">AI Workspace</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 py-3 px-4 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-xl text-primary font-bold border-r-2 border-primary bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined active-tab group-hover:scale-110 transition-transform" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="font-body-md text-body-md">Library</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-body-md text-body-md">Research</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Insights</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-white/10 space-y-4">
+<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-xl font-label-md flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>New Project</span>
+</button>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary text-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="help_outline">help_outline</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary text-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="security">security</span>
+<span>Privacy</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Workspace Layout -->
+<main class="flex-1 ml-[280px] mt-16 flex overflow-hidden">
+<!-- Center Panel: PDF Viewer -->
+<section class="flex-1 flex flex-col bg-surface-dim relative border-r border-white/5">
+<!-- PDF Toolbar -->
+<div class="h-12 border-b border-white/5 bg-surface-container-low/50 backdrop-blur-sm flex items-center justify-between px-6">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 bg-surface-container-highest/50 rounded-lg p-1">
+<button class="p-1 hover:bg-white/10 rounded text-on-surface-variant"><span class="material-symbols-outlined text-[20px]" data-icon="zoom_out">zoom_out</span></button>
+<span class="text-label-sm px-2 border-x border-white/10">100%</span>
+<button class="p-1 hover:bg-white/10 rounded text-on-surface-variant"><span class="material-symbols-outlined text-[20px]" data-icon="zoom_in">zoom_in</span></button>
+</div>
+<div class="h-4 w-[1px] bg-white/10"></div>
+<div class="flex items-center gap-2">
+<button class="p-1.5 hover:bg-primary/20 rounded-lg text-primary"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-1.5 hover:bg-white/10 rounded-lg text-on-surface-variant"><span class="material-symbols-outlined text-[20px]" data-icon="highlight">highlight</span></button>
+<button class="p-1.5 hover:bg-white/10 rounded-lg text-on-surface-variant"><span class="material-symbols-outlined text-[20px]" data-icon="sticky_note_2">sticky_note_2</span></button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-label-sm text-on-surface-variant">Page 1 of 15</span>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-white/10 rounded text-on-surface-variant"><span class="material-symbols-outlined text-[20px]" data-icon="chevron_left">chevron_left</span></button>
+<button class="p-1 hover:bg-white/10 rounded text-on-surface-variant"><span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- PDF Canvas -->
+<div class="flex-1 overflow-y-auto p-12 custom-scrollbar bg-surface-dim/40 relative">
+<div class="max-w-[800px] mx-auto bg-white text-slate-900 shadow-2xl p-16 min-h-[1100px] rounded-sm transform transition-transform hover:scale-[1.01]">
+<h2 class="text-4xl font-bold mb-8 leading-tight">Attention Is All You Need</h2>
+<div class="grid grid-cols-2 gap-8 text-sm mb-12 italic border-b pb-8">
+<div>
+                            Ashish Vaswani*<br/>Google Brain<br/>avaswani@google.com
+                        </div>
+<div>
+                            Noam Shazeer*<br/>Google Brain<br/>noam@google.com
+                        </div>
+</div>
+<h3 class="text-xl font-bold mb-4 uppercase tracking-wider text-primary-container/80">Abstract</h3>
+<p class="text-lg leading-relaxed mb-8">
+                        The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely...
+                    </p>
+<h3 class="text-xl font-bold mb-4 uppercase tracking-wider text-primary-container/80">1 Introduction</h3>
+<p class="text-lg leading-relaxed mb-6">
+                        Recurrent neural networks, long short-term memory [12] and gated recurrent [7] neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation...
+                    </p>
+<!-- Simulated Highlight -->
+<p class="text-lg leading-relaxed mb-6">
+<span class="bg-primary/30 rounded-sm">Self-attention, sometimes called intra-attention is an attention mechanism relating different positions of a single sequence in order to compute a representation of the sequence.</span>
+</p>
+</div>
+</div>
+</section>
+<!-- Right Panel: AI Copilot Chat -->
+<aside class="w-[400px] glass-panel bg-slate-900/60 border-l border-white/5 flex flex-col">
+<div class="p-6 border-b border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="auto_awesome">auto_awesome</span>
+<h3 class="text-headline-md font-bold text-on-surface">AI Copilot</h3>
+</div>
+<button class="p-2 hover:bg-white/5 rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+<!-- User Message -->
+<div class="flex flex-col gap-2 items-end">
+<div class="bg-surface-container-high px-4 py-3 rounded-2xl rounded-tr-none max-w-[85%] border border-white/5">
+<p class="text-body-md text-on-surface">Explain the core benefit of the Transformer architecture compared to RNNs.</p>
+</div>
+</div>
+<!-- AI Response -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-on-primary" data-icon="bolt">bolt</span>
+</div>
+<span class="text-label-sm font-bold text-primary">NoteSage AI</span>
+</div>
+<div class="space-y-4">
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                            The primary benefit is <strong class="text-primary">parallelization</strong>. Unlike RNNs, which process data sequentially (word by word), the Transformer uses attention mechanisms to process the entire sequence simultaneously.
+                        </p>
+<div class="p-4 bg-primary/5 rounded-xl border border-primary/20 space-y-3">
+<p class="text-label-sm font-bold text-primary uppercase tracking-widest">Sources</p>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 transition-all text-body-sm group">
+<span class="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px]">1</span>
+<span class="text-on-surface-variant group-hover:text-primary">Sec 1: Introduction</span>
+</button>
+<button class="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 transition-all text-body-sm group">
+<span class="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px]">2</span>
+<span class="text-on-surface-variant group-hover:text-primary">Abstract</span>
+</button>
+</div>
+</div>
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                            This drastically reduces training time and allows for training much larger models, as it mitigates the "vanishing gradient" problem found in long sequences in RNNs.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Chat Input & Suggested Questions -->
+<div class="p-6 border-t border-white/5 space-y-4 bg-surface-dim/80">
+<div class="flex flex-wrap gap-2">
+<button class="text-label-sm bg-surface-container-highest/40 hover:bg-primary/20 text-on-surface-variant hover:text-primary px-3 py-2 rounded-full border border-white/5 transition-all">What is Multi-Head Attention?</button>
+<button class="text-label-sm bg-surface-container-highest/40 hover:bg-primary/20 text-on-surface-variant hover:text-primary px-3 py-2 rounded-full border border-white/5 transition-all">Summarize Section 2</button>
+</div>
+<div class="relative group">
+<textarea class="w-full bg-surface-container-low border border-white/10 rounded-2xl p-4 pr-12 text-body-md focus:ring-1 focus:ring-primary/40 focus:border-primary/40 transition-all resize-none placeholder:text-on-surface-variant/40" placeholder="Ask follow-up or highlight text..." rows="2"></textarea>
+<button class="absolute right-3 bottom-3 w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_upward">arrow_upward</span>
+</button>
+</div>
+</div>
+</aside>
+</main>
+<!-- Contextual FAB (Hidden as per requirement for specific task views, but available if needed) -->
+<!-- Suppressed on Details/Transactional screens -->
+<script>
+        // Micro-interactions for glass panels and scrolling
+        document.addEventListener('DOMContentLoaded', () => {
+            const panels = document.querySelectorAll('.glass-panel');
+            panels.forEach(panel => {
+                panel.addEventListener('mouseenter', () => {
+                    panel.style.backgroundColor = 'rgba(15, 20, 31, 0.75)';
+                });
+                panel.addEventListener('mouseleave', () => {
+                    panel.style.backgroundColor = 'rgba(15, 20, 31, 0.6)';
+                });
+            });
+
+            // Smooth Scroll for Custom Scrollbars
+            const scrollers = document.querySelectorAll('.custom-scrollbar');
+            scrollers.forEach(s => {
+                s.style.scrollBehavior = 'smooth';
+            });
+        });
+    </script>
+</body></html>

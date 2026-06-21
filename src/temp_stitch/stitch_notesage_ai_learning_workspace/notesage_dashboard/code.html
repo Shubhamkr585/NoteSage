@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NoteSage - AI Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#d8e2ff",
+                    "secondary-container": "#0566d9",
+                    "surface-container-highest": "#273647",
+                    "surface-bright": "#2c3a4c",
+                    "on-primary-fixed-variant": "#5516be",
+                    "on-primary-fixed": "#23005c",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container": "#122131",
+                    "on-secondary-container": "#e6ecff",
+                    "inverse-primary": "#6d3bd7",
+                    "on-background": "#d4e4fa",
+                    "on-primary": "#3c0091",
+                    "outline-variant": "#494454",
+                    "on-secondary": "#002e6a",
+                    "surface-container-lowest": "#010f1f",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-tertiary": "#283044",
+                    "on-tertiary-fixed": "#131b2e",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "on-primary-container": "#340080",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "on-surface": "#d4e4fa",
+                    "secondary": "#adc6ff",
+                    "surface-container-low": "#0d1c2d",
+                    "surface-variant": "#273647",
+                    "surface-tint": "#d0bcff",
+                    "primary-container": "#a078ff",
+                    "surface-container-high": "#1c2b3c",
+                    "error-container": "#93000a",
+                    "on-error-container": "#ffdad6",
+                    "error": "#ffb4ab",
+                    "tertiary-container": "#8990a8",
+                    "on-tertiary-container": "#22293d",
+                    "inverse-on-surface": "#233143",
+                    "surface-dim": "#051424",
+                    "tertiary-fixed": "#dae2fd",
+                    "tertiary": "#bec6e0",
+                    "on-error": "#690005",
+                    "primary-fixed": "#e9ddff",
+                    "background": "#051424",
+                    "outline": "#958ea0",
+                    "primary": "#d0bcff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface": "#051424",
+                    "primary-fixed-dim": "#d0bcff",
+                    "on-surface-variant": "#cbc3d7",
+                    "inverse-surface": "#d4e4fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "unit": "4px",
+                    "gutter": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Geist"],
+                    "label-sm": ["Geist"],
+                    "headline-lg-mobile": ["Geist"],
+                    "display": ["Geist"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Geist"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Geist"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #051424;
+            color: #d4e4fa;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(18, 33, 49, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #d0bcff 0%, #a078ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6d3bd7 0%, #a078ff 100%);
+        }
+        .streak-glow {
+            box-shadow: 0 0 40px -10px rgba(208, 188, 255, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(208, 188, 255, 0.2);
+            border-radius: 10px;
+        }
+        .active-nav-indicator {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #d0bcff;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar (Persistent Left Sidebar) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-slate-900/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-white/10 flex flex-col py-8 px-6 z-50">
+<div class="mb-10">
+<h1 class="text-headline-md font-headline-md font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                NoteSage
+            </h1>
+<p class="text-on-surface-variant text-label-sm mt-1 opacity-70 uppercase tracking-widest">AI Workspace</p>
+</div>
+<button class="mb-8 w-full gradient-bg text-on-primary-container font-label-md py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">add</span>
+            New Project
+        </button>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard is Active -->
+<a class="relative group flex items-center gap-3 px-4 py-3 text-primary font-bold transition-all bg-white/5 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+<div class="active-nav-indicator"></div>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-body-md text-body-md">Library</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-body-md text-body-md">Research</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Insights</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-white/5 space-y-2">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant text-body-sm hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                Help
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant text-body-sm hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">security</span>
+                Privacy
+            </a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] z-40 bg-surface/70 dark:bg-surface/70 backdrop-blur-md border-b border-white/10 flex justify-between items-center h-16 px-margin-desktop">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-sm focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/40" placeholder="Search research, notes, or AI insights..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-white/10">
+<div class="text-right hidden sm:block">
+<p class="text-label-md font-label-md text-on-surface">Alex Chen</p>
+<p class="text-[10px] text-primary/70 uppercase font-bold tracking-tighter">Pro Researcher</p>
+</div>
+<div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-primary/20">
+<img class="w-full h-full object-cover" data-alt="A high-quality professional portrait of a young male researcher with a thoughtful expression, wearing modern glasses and a dark tech-aesthetic sweater, set against a softly blurred minimalist workspace with cool blue and purple atmospheric lighting, maintaining a premium SaaS brand look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxvTazXMZxalPUtWzEIQtIfGYe-HRKAoTieP9vYvjs80aOGHxB6cwdmALTbkeAN7GrBJQPUl6XLwOaBhd8MkiB2zFw4jXpyQ_gZu_8K2D71YgfonUgXk8QqLkSnvD0tFQR1oBf5T96Ez0hn_b7DcxfEtwWkc5KSVii8g4_gs53J_PxRYOi18JzO27mbPtLDf0-RY-JKhVChgLi6qDgVtJwQhXVrJaK-N1ZBdUntRFnNxnKjUeOLZvkjM-Sd0lrwuODEtjqpNPHaKhD"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] mt-16 flex-1 px-margin-desktop py-10 max-w-[1400px]">
+<!-- Welcome Section -->
+<section class="mb-12">
+<h2 class="font-headline-lg text-headline-lg mb-2">Good morning, Alex.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Ready to continue your research on <span class="text-primary font-semibold">Quantum Computing</span>?</p>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Study Streak Card -->
+<div class="col-span-12 lg:col-span-4 glass-panel rounded-3xl p-8 flex flex-col justify-between streak-glow overflow-hidden relative group">
+
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-sm font-label-sm">Daily Goal Met</span>
+</div>
+<div class="mb-2">
+<span class="text-display font-display leading-none">12</span>
+<span class="text-headline-md font-headline-md text-on-surface-variant">days</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-medium">Consecutive study streak</p>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 relative z-10">
+<div class="flex justify-between text-label-sm mb-2">
+<span>Current Rank: Master</span>
+<span>Next: 15 Days</span>
+</div>
+<div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[80%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Learning Progress Analytics -->
+<div class="col-span-12 lg:col-span-8 glass-panel rounded-3xl p-8">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-headline-md font-headline-md mb-1">Learning Progress</h3>
+<p class="text-body-sm text-on-surface-variant">Activity intensity over the last 7 days</p>
+</div>
+<select class="bg-surface-container-high border-white/10 rounded-lg text-label-sm px-4 py-2 focus:ring-primary/30">
+<option>This Week</option>
+<option>Last Week</option>
+</select>
+</div>
+<div class="h-48 w-full flex items-end justify-between gap-2 px-2">
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-white/5 rounded-t-lg transition-all hover:bg-primary/20 relative group" style="height: 40%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">2.4h</div>
+</div>
+<span class="text-[10px] mt-3 text-on-surface-variant">Mon</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-white/5 rounded-t-lg transition-all hover:bg-primary/20 relative group" style="height: 65%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">4.1h</div>
+</div>
+<span class="text-[10px] mt-3 text-on-surface-variant">Tue</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-white/5 rounded-t-lg transition-all hover:bg-primary/20 relative group" style="height: 50%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">3.0h</div>
+</div>
+<span class="text-[10px] mt-3 text-on-surface-variant">Wed</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-primary/40 rounded-t-lg transition-all hover:bg-primary/60 relative group" style="height: 90%;">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">5.8h</div>
+</div>
+<span class="text-[10px] mt-3 text-primary font-bold">Thu</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-white/5 rounded-t-lg transition-all hover:bg-primary/20 relative group" style="height: 35%;"></div>
+<span class="text-[10px] mt-3 text-on-surface-variant">Fri</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-white/5 rounded-t-lg transition-all hover:bg-primary/20 relative group" style="height: 20%;"></div>
+<span class="text-[10px] mt-3 text-on-surface-variant">Sat</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<div class="w-full bg-white/5 rounded-t-lg transition-all hover:bg-primary/20 relative group" style="height: 15%;"></div>
+<span class="text-[10px] mt-3 text-on-surface-variant">Sun</span>
+</div>
+</div>
+</div>
+<!-- Recent Documents -->
+<div class="col-span-12 xl:col-span-8 glass-panel rounded-3xl p-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-headline-md font-headline-md">Recent Documents</h3>
+<a class="text-primary text-label-md font-label-md hover:underline" href="#">View Library</a>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
+<!-- Doc Card 1 -->
+<div class="min-w-[220px] bg-surface-container-low rounded-2xl p-4 border border-white/5 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="w-full h-32 bg-surface-container rounded-xl mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="A visually clean academic paper thumbnail layout, featuring abstract mathematical formulas and a title block that says 'Quantum Decryptors'. The style is minimalist with a slate-blue background and crisp white typography, matching a premium educational software interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR2EXISEKEq45EPtfC1wutk9jjQvI-CuSTCE-xZ8Ozpd_msTWPD7A00G5oTg_pKM74PyFv2y0LE9WsusQw4Yqb3UgLy6Y0Z_JyqFeOD0BX73QbZipPVUC8LVv9ndS3aC-hn1awlEPQe7eQ09_DBJ02W-52g00-bDcAoUxoHZ6xW0Sgo2oniq9ksdmkB66WXWt_Gx-pwcd08GlI7gELo4l0mr0ak25NHrJY9CxX7_BBg_QXdsju96DH_QxWfwsDglYl9O83n63ZsJG6"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+</div>
+<p class="text-body-md font-semibold mb-1 truncate">Quantum Decryptors</p>
+<p class="text-label-sm text-on-surface-variant mb-3">Modified 2h ago</p>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-slate-800 rounded text-[10px] text-on-surface-variant uppercase tracking-tighter">Physics</span>
+<span class="px-2 py-0.5 bg-slate-800 rounded text-[10px] text-on-surface-variant uppercase tracking-tighter">PDF</span>
+</div>
+</div>
+<!-- Doc Card 2 -->
+<div class="min-w-[220px] bg-surface-container-low rounded-2xl p-4 border border-white/5 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="w-full h-32 bg-surface-container rounded-xl mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="A clean, minimalist digital notepad thumbnail showing high-level organized bullet points and a small hand-drawn diagram of a qubit. The background is a sophisticated dark slate with soft purple highlights, reflecting a professional AI-enhanced study tool." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVlElraOdGiY4K8CKLs02tfCQYMFtJsJuHzzREoN4EYKvmI9V7xl7WVpwBpMjfiAXgAMJwfVrD8jsoZx4y0tHdBH2hhW1fVWUmvl9wSe54kYOqY64fMO6ItFTQ0W25Oy1ZpCo-e60iUTFjpbGWemx7uwGk9O6Gd4sRUizNsCYARfg-IUs-2x7C4xcFle-sZAoj2-uXmwSdbeEPeTFFPTiKSGvlYBQFInvQHic_2O1ej2xjGmIJ_nyWPCF4e6rGyoZrsXuMDEh12JBp"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+</div>
+<p class="text-body-md font-semibold mb-1 truncate">Qubit Entanglement</p>
+<p class="text-label-sm text-on-surface-variant mb-3">Modified 5h ago</p>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-slate-800 rounded text-[10px] text-on-surface-variant uppercase tracking-tighter">Research</span>
+<span class="px-2 py-0.5 bg-slate-800 rounded text-[10px] text-on-surface-variant uppercase tracking-tighter">NOTE</span>
+</div>
+</div>
+<!-- Doc Card 3 -->
+<div class="min-w-[220px] bg-surface-container-low rounded-2xl p-4 border border-white/5 hover:border-primary/30 transition-all cursor-pointer group">
+<div class="w-full h-32 bg-surface-container rounded-xl mb-4 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="A visual represention of a complex neural network diagram on a document cover. The layout is technical and high-end, using thin glowing lines and a dark charcoal background with violet spectral accents, fitting for a sophisticated AI workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5foZbYjkmKXJ4Qmw3UUSiZabTJTWVT7obo6kN9lf9B1-R7xCp9OUlnfNI6UxhLpKFy9XRaKlF7GfIozRGa0XG42iEOUsO3zakEqJxDqTab108RrrcFAy-Hms0RbZeZ_ecT-lADvw98QtZ36Jynk5qin4jC19fz1SAaF3My1Rhe21_mvlE_PPUeL1cUJUXoI99J7IhdEH8hgbfXqRRdJtJt5jfXhb00XAMGns0r0toySfAbmXYQ2ynaVKzY2Q1OTaxRwxngTAFfdP8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+</div>
+<p class="text-body-md font-semibold mb-1 truncate">AI Optimization</p>
+<p class="text-label-sm text-on-surface-variant mb-3">Modified 1d ago</p>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-slate-800 rounded text-[10px] text-on-surface-variant uppercase tracking-tighter">AI</span>
+<span class="px-2 py-0.5 bg-slate-800 rounded text-[10px] text-on-surface-variant uppercase tracking-tighter">PDF</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Upcoming Study Tasks -->
+<div class="col-span-12 xl:col-span-4 glass-panel rounded-3xl p-8 flex flex-col">
+<h3 class="text-headline-md font-headline-md mb-6">Today's Goals</h3>
+<div class="space-y-4 flex-1">
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-6 h-6 border-2 border-primary/40 rounded-lg group-hover:border-primary transition-colors flex items-center justify-center">
+<input checked="" class="peer opacity-0 absolute inset-0 cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined text-primary text-[18px] opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+<span class="text-body-md peer-checked:line-through peer-checked:text-on-surface-variant/40 transition-all">Review Grover's Algorithm</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-6 h-6 border-2 border-primary/40 rounded-lg group-hover:border-primary transition-colors flex items-center justify-center">
+<input class="peer opacity-0 absolute inset-0 cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined text-primary text-[18px] opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+<span class="text-body-md peer-checked:line-through peer-checked:text-on-surface-variant/40 transition-all">Generate AI Flashcards for Ch. 4</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-6 h-6 border-2 border-primary/40 rounded-lg group-hover:border-primary transition-colors flex items-center justify-center">
+<input class="peer opacity-0 absolute inset-0 cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined text-primary text-[18px] opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+<span class="text-body-md peer-checked:line-through peer-checked:text-on-surface-variant/40 transition-all">Submit Weekly Progress Report</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-6 h-6 border-2 border-primary/40 rounded-lg group-hover:border-primary transition-colors flex items-center justify-center">
+<input class="peer opacity-0 absolute inset-0 cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined text-primary text-[18px] opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+<span class="text-body-md peer-checked:line-through peer-checked:text-on-surface-variant/40 transition-all">Draft Intro for Quantum Paper</span>
+</label>
+</div>
+<button class="mt-8 text-on-surface-variant hover:text-primary text-label-sm font-label-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                    Add new task
+                </button>
+</div>
+<!-- Quick Actions -->
+<div class="col-span-12 glass-panel rounded-3xl p-8">
+<h3 class="text-headline-md font-headline-md mb-6">Quick Actions</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<button class="flex flex-col items-center justify-center gap-4 p-8 bg-surface-container-low rounded-2xl border border-white/5 hover:border-primary/40 hover:bg-white/5 transition-all group">
+<div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">upload_file</span>
+</div>
+<div class="text-center">
+<p class="font-semibold text-body-lg">Upload PDF</p>
+<p class="text-body-sm text-on-surface-variant">Import research materials</p>
+</div>
+</button>
+<button class="flex flex-col items-center justify-center gap-4 p-8 bg-surface-container-low rounded-2xl border border-white/5 hover:border-primary/40 hover:bg-white/5 transition-all group">
+<div class="w-14 h-14 bg-secondary-container/10 rounded-full flex items-center justify-center text-secondary-container group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">chat_bubble</span>
+</div>
+<div class="text-center">
+<p class="font-semibold text-body-lg">Start AI Chat</p>
+<p class="text-body-sm text-on-surface-variant">Ask questions about notes</p>
+</div>
+</button>
+<button class="flex flex-col items-center justify-center gap-4 p-8 bg-surface-container-low rounded-2xl border border-white/5 hover:border-primary/40 hover:bg-white/5 transition-all group">
+<div class="w-14 h-14 bg-tertiary-container/10 rounded-full flex items-center justify-center text-tertiary-container group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">quiz</span>
+</div>
+<div class="text-center">
+<p class="font-semibold text-body-lg">New Flashcard</p>
+<p class="text-body-sm text-on-surface-variant">Test your active recall</p>
+</div>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating AI Command Bar (shadcn-inspired) -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-surface-container-highest/90 backdrop-blur-2xl px-6 py-4 rounded-2xl border border-white/10 shadow-2xl z-50">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-80 placeholder:text-on-surface-variant/50" placeholder="Ask AI to summarize your last note..." type="text"/>
+<div class="flex items-center gap-2">
+<kbd class="px-2 py-1 bg-white/10 rounded text-[10px] text-on-surface-variant font-bold border border-white/10">⌘</kbd>
+<kbd class="px-2 py-1 bg-white/10 rounded text-[10px] text-on-surface-variant font-bold border border-white/10">K</kbd>
+</div>
+</div>
+<script>
+        // Micro-interaction for sidebar expansion/collapse or other UI responsiveness
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simulating some dynamic content refresh or interaction logic
+        console.log("NoteSage Dashboard Initialized.");
+    </script>
+</body></html>

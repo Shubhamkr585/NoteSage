@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up | NoteSage</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Geist:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#adc6ff",
+                    "primary-fixed-dim": "#d0bcff",
+                    "background": "#051424",
+                    "on-error": "#690005",
+                    "on-surface": "#d4e4fa",
+                    "on-primary-fixed-variant": "#5516be",
+                    "inverse-surface": "#d4e4fa",
+                    "primary-fixed": "#e9ddff",
+                    "surface-container-low": "#0d1c2d",
+                    "on-primary": "#3c0091",
+                    "surface-dim": "#051424",
+                    "on-surface-variant": "#cbc3d7",
+                    "surface-bright": "#2c3a4c",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-tertiary": "#283044",
+                    "tertiary-fixed": "#dae2fd",
+                    "surface-container-high": "#1c2b3c",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "on-secondary-fixed": "#001a42",
+                    "surface": "#051424",
+                    "outline": "#958ea0",
+                    "on-secondary": "#002e6a",
+                    "on-error-container": "#ffdad6",
+                    "on-background": "#d4e4fa",
+                    "surface-container-lowest": "#010f1f",
+                    "secondary-container": "#0566d9",
+                    "error": "#ffb4ab",
+                    "on-primary-container": "#340080",
+                    "outline-variant": "#494454",
+                    "tertiary-container": "#8990a8",
+                    "tertiary": "#bec6e0",
+                    "on-tertiary-fixed": "#131b2e",
+                    "error-container": "#93000a",
+                    "surface-container": "#122131",
+                    "primary-container": "#a078ff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "primary": "#d0bcff",
+                    "on-secondary-container": "#e6ecff",
+                    "surface-variant": "#273647",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "surface-tint": "#d0bcff",
+                    "on-tertiary-container": "#22293d",
+                    "surface-container-highest": "#273647",
+                    "inverse-primary": "#6d3bd7",
+                    "inverse-on-surface": "#233143",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-primary-fixed": "#23005c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "margin-desktop": "40px",
+                    "container-max": "1280px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "label-md": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "label-sm": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Geist"],
+                    "display": ["Geist"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #051424;
+            color: #d4e4fa;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(18, 33, 49, 0.7);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .vibrant-gradient {
+            background: linear-gradient(135deg, #a078ff 0%, #0566d9 100%);
+        }
+        .vibrant-gradient:hover {
+            filter: brightness(1.1);
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(208, 188, 255, 0.15);
+        }
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(109, 59, 215, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(5, 102, 217, 0.15) 0px, transparent 50%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen items-center justify-center font-body-md text-body-md p-margin-mobile md:p-margin-desktop">
+<div class="mesh-bg"></div>
+<!-- Main Auth Container -->
+<main class="w-full max-w-[480px] z-10">
+<!-- Logo Branding -->
+<div class="flex flex-col items-center mb-10">
+<div class="w-14 h-14 vibrant-gradient rounded-xl flex items-center justify-center mb-4 shadow-2xl shadow-primary/20">
+<span class="material-symbols-outlined text-white text-[32px]">biotech</span>
+</div>
+<h1 class="font-display text-display tracking-tight text-primary">NoteSage</h1>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">Elevate your cognitive workspace</p>
+</div>
+<!-- Glassmorphic Card -->
+<div class="glass-card rounded-xl p-8 md:p-10 shadow-2xl">
+<header class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Create your account</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Join the next generation of knowledge workers.</p>
+</header>
+<form class="flex flex-col gap-6" onsubmit="return false;">
+<!-- Full Name -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant px-1" for="full-name">Full Name</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-4 text-outline text-xl">person</span>
+<input class="w-full bg-surface-container-low border-b-2 border-transparent focus:border-primary-container focus:ring-0 transition-all duration-300 py-3.5 pl-12 pr-4 rounded-lg text-on-surface placeholder:text-outline/50 input-glow" id="full-name" placeholder="John Doe" type="text"/>
+</div>
+</div>
+<!-- Email -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant px-1" for="email">Email Address</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-4 text-outline text-xl">mail</span>
+<input class="w-full bg-surface-container-low border-b-2 border-transparent focus:border-primary-container focus:ring-0 transition-all duration-300 py-3.5 pl-12 pr-4 rounded-lg text-on-surface placeholder:text-outline/50 input-glow" id="email" placeholder="name@example.com" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant px-1" for="password">Password</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-4 text-outline text-xl">lock</span>
+<input class="w-full bg-surface-container-low border-b-2 border-transparent focus:border-primary-container focus:ring-0 transition-all duration-300 py-3.5 pl-12 pr-4 rounded-lg text-on-surface placeholder:text-outline/50 input-glow" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 text-outline hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+</div>
+<!-- TOS Checkbox -->
+<div class="flex items-start gap-3 py-2">
+<div class="relative flex items-center">
+<input class="w-5 h-5 rounded border-outline-variant bg-surface-container-low text-primary-container focus:ring-primary-container/20 focus:ring-offset-0 transition-all cursor-pointer" id="terms" type="checkbox"/>
+</div>
+<label class="font-body-sm text-body-sm text-on-surface-variant leading-tight cursor-pointer" for="terms">
+                        I agree to the <a class="text-primary hover:underline transition-all" href="#">Terms of Service</a> and <a class="text-primary hover:underline transition-all" href="#">Privacy Policy</a>.
+                    </label>
+</div>
+<!-- Submit Button -->
+<button class="vibrant-gradient text-white font-label-md text-label-md py-4 rounded-xl shadow-lg shadow-primary-container/20 active:scale-[0.98] transition-transform duration-150 mt-2" type="submit">
+                    Create Account
+                </button>
+</form>
+<!-- Divider -->
+<div class="relative flex items-center my-8">
+<div class="flex-grow border-t border-white/5"></div>
+<span class="mx-4 font-label-sm text-label-sm text-outline uppercase tracking-widest">or continue with</span>
+<div class="flex-grow border-t border-white/5"></div>
+</div>
+<!-- Social Options -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 bg-surface-container-high hover:bg-surface-bright transition-colors py-3 rounded-lg border border-white/5 font-label-md text-label-md text-on-surface">
+<img class="w-5 h-5" data-alt="Official Google logo icon with its distinctive blue, red, yellow, and green segments rendered in a high-fidelity digital format suitable for a premium dark mode UI. The logo is clean and minimalist, set against a dark glass-morphic button background with soft glows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjadoRQKdgPZ2-mqC1dPWIcSrynoL2j0gjZKW5rjOvCEtVK-yJ4v9YnCz88bfpy_jGehczfzjvu8pXE4SJrzzL2PjH0aT3OGJMTV_KVX1EkKPdH0VYHFNdtOhxVuFnizkRKB0SEwjsUawXi59y7vkivhbl4HB_iAtDYxORRv2drFaDy1jw_SYgzCycyDQgwwFHimz9_xdptxMINZi7ceBaSsctoFlKZTtbC7hh6EdqDgmaRDl4ViA0RpL8CRzuRU_rlFdeMpbdAJ4B"/>
+                    Google
+                </button>
+<button class="flex items-center justify-center gap-3 bg-surface-container-high hover:bg-surface-bright transition-colors py-3 rounded-lg border border-white/5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">apps</span>
+                    Apple
+                </button>
+</div>
+</div>
+<!-- Footer Link -->
+<footer class="mt-8 text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Already have an account? 
+                <a class="text-primary font-bold hover:text-secondary-fixed transition-colors ml-1" href="#">Sign In</a>
+</p>
+</footer>
+</main>
+<!-- Ambient Decorative Elements -->
+<div class="fixed top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="fixed bottom-20 -right-20 w-80 h-80 bg-secondary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
+<script>
+        // Micro-interaction for input fields
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.querySelector('.material-symbols-outlined').style.color = '#d0bcff';
+            });
+            input.addEventListener('blur', () => {
+                if (!input.value) {
+                    input.parentElement.querySelector('.material-symbols-outlined').style.color = '#958ea0';
+                }
+            });
+        });
+
+        // Simple visibility toggle logic
+        const toggleBtn = document.querySelector('button .material-symbols-outlined:contains("visibility")');
+        if(toggleBtn) {
+            toggleBtn.parentElement.addEventListener('click', () => {
+                const passwordInput = document.getElementById('password');
+                const icon = toggleBtn;
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.textContent = 'visibility_off';
+                } else {
+                    passwordInput.type = 'password';
+                    icon.textContent = 'visibility';
+                }
+            });
+        }
+    </script>
+</body></html>

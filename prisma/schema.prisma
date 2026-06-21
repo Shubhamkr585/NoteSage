@@ -1,0 +1,201 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [vector]
+}
+
+// Better Auth Models
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique 
+  emailVerified Boolean
+  image         String?
+  bio           String?   @default("Strategic design student focusing on cognitive psychology and knowledge management systems.")
+  theme         String    @default("dark")
+  accentColor   String    @default("#d0bcff")
+  emailNotifications Boolean @default(true)
+  pushNotifications  Boolean @default(false)
+  productUpdates     Boolean @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  
+  // NoteSage Relations
+  documents     Document[]
+  chats         Chat[]
+  flashcards    Flashcard[]
+  quizzes       Quiz[]
+  studyPlans    StudyPlan[]
+
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  s3Key     String   // S3 Object Key
+  type      DocType  // PDF, TEXT
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chunks    DocumentChunk[]
+  flashcards Flashcard[]
+}
+
+enum DocType {
+  PDF
+  TEXT
+}
+
+model DocumentChunk {
+  id         String   @id @default(cuid())
+  documentId String
+  content    String
+  pageNumber Int?     // For Citations
+  
+  // pgvector embedding: 3072 dimensions for Gemini embeddings
+  embedding  Unsupported("vector(3072)")?
+  
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Chat {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  createdAt DateTime @default(now())
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  chatId    String
+  role      Role     // USER, AI
+  content   String
+  sources   Json?    // Store citation metadata array
+  createdAt DateTime @default(now())
+  
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  AI
+}
+
+model Flashcard {
+  id         String   @id @default(cuid())
+  userId     String
+  documentId String?
+  question   String
+  answer     String
+  difficulty Int      @default(0) // Spaced repetition stat
+  nextReview DateTime @default(now())
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document   Document? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Quiz {
+  id         String   @id @default(cuid())
+  userId     String
+  title      String
+  documentId String?
+  score      Int?
+  createdAt  DateTime @default(now())
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions  QuizQuestion[]
+}
+
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  quizId        String
+  question      String
+  options       Json     // Array of options
+  correctAnswer String
+  type          QuestionType
+  
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+model StudyPlan {
+  id        String   @id @default(cuid())
+  userId    String
+  subject   String
+  examDate  DateTime
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks     StudyTask[]
+}
+
+model StudyTask {
+  id        String   @id @default(cuid())
+  planId    String
+  topic     String
+  date      DateTime
+  status    TaskStatus @default(PENDING)
+  
+  plan      StudyPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+}

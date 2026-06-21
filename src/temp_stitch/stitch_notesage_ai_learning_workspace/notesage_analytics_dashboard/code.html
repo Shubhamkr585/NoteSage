@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NoteSage | Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .heatmap-square {
+            transition: all 0.2s ease;
+        }
+        .heatmap-square:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 0 12px rgba(208, 188, 255, 0.4);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#22293d",
+                      "surface-container-highest": "#273647",
+                      "on-tertiary-fixed-variant": "#3f465c",
+                      "surface-container-lowest": "#010f1f",
+                      "primary-fixed": "#e9ddff",
+                      "on-surface-variant": "#cbc3d7",
+                      "on-tertiary": "#283044",
+                      "error": "#ffb4ab",
+                      "on-primary": "#3c0091",
+                      "on-error-container": "#ffdad6",
+                      "error-container": "#93000a",
+                      "outline": "#958ea0",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "surface": "#051424",
+                      "inverse-primary": "#6d3bd7",
+                      "primary-fixed-dim": "#d0bcff",
+                      "on-tertiary-fixed": "#131b2e",
+                      "tertiary-fixed-dim": "#bec6e0",
+                      "inverse-surface": "#d4e4fa",
+                      "background": "#051424",
+                      "surface-tint": "#d0bcff",
+                      "on-primary-container": "#340080",
+                      "on-secondary": "#002e6a",
+                      "on-secondary-container": "#e6ecff",
+                      "on-primary-fixed-variant": "#5516be",
+                      "surface-container-high": "#1c2b3c",
+                      "surface-container": "#122131",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-secondary-fixed": "#001a42",
+                      "surface-dim": "#051424",
+                      "outline-variant": "#494454",
+                      "on-background": "#d4e4fa",
+                      "surface-container-low": "#0d1c2d",
+                      "primary-container": "#a078ff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "on-primary-fixed": "#23005c",
+                      "tertiary-fixed": "#dae2fd",
+                      "surface-bright": "#2c3a4c",
+                      "secondary": "#adc6ff",
+                      "surface-variant": "#273647",
+                      "on-surface": "#d4e4fa",
+                      "tertiary-container": "#8990a8",
+                      "secondary-container": "#0566d9",
+                      "on-error": "#690005",
+                      "tertiary": "#bec6e0",
+                      "inverse-on-surface": "#233143",
+                      "primary": "#d0bcff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px",
+                      "unit": "4px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "label-sm": ["Geist"],
+                      "body-sm": ["Inter"],
+                      "display": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "label-md": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden">
+<!-- Sidebar (SideNavBar Shared Component) -->
+<aside class="fixed h-full w-[280px] left-0 top-0 bg-slate-900/70 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col py-margin-desktop">
+<div class="px-6 mb-12">
+<h1 class="font-headline-md text-headline-md font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                NoteSage
+            </h1>
+<p class="text-on-surface-variant font-label-sm text-label-sm mt-1 opacity-70">AI Learning Workspace</p>
+</div>
+<nav class="flex-1 space-y-2 px-3">
+<!-- Active State Navigation -->
+<a class="flex items-center gap-4 px-4 py-3 text-primary font-bold border-r-2 border-primary bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-md text-label-md">Library</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">science</span>
+<span class="font-label-md text-label-md">Research</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">Insights</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 pt-6 border-t border-white/5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a young academic woman with a kind expression, wearing minimalist glasses and a dark turtleneck, set against a blurred background of a modern library with cool blue and purple lighting tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV1fKyVXYlMg7UGmCuQNZDpBnWFhSq5Z4F3VqQIht3JfdiNou5XcOpZAfg2gHwr2I1Q7XL84kv6HJLSNYtQwrYhC77i1P2L6HT-8Wba27R76sJpp47hcD56aK8NdBi3J_AIHjuE16ewKl6eaf_UGR6mw8JEU6XhSuaxIUj9E7BKhP5VA4KzT5w_F4OtAlsv4wPK4eodIPbmwnH5MuAMMlEP4ky-ZOh7EJRo34tLnFImeyfRzMTHARkAtrt2GjpMq2KTraIYh4n5Kz1"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase tracking-widest">Mastery Level 42</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top Navigation (TopNavBar Shared Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/70 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-margin-desktop z-40">
+<div class="flex items-center flex-1">
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-white/5 border-none rounded-lg pl-10 pr-4 py-2 text-body-sm focus:ring-1 ring-primary/20 transition-all" placeholder="Search analytics or topics..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="bg-gradient-to-r from-primary to-secondary px-4 py-1.5 rounded-lg text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity">
+                Generate Report
+            </button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-24 px-margin-desktop pb-margin-desktop max-w-[1400px] mx-auto">
+<!-- Header Section -->
+<header class="mb-8">
+<h2 class="font-headline-lg text-headline-lg mb-2">Learning Analytics</h2>
+<p class="text-on-surface-variant max-w-2xl">Visualizing your cognitive growth across all learning domains. Your study intensity has increased by 14% this week.</p>
+</header>
+<!-- Metrics Grid (Asymmetric Bento) -->
+<div class="grid grid-cols-12 gap-6 mb-12">
+<!-- Mastery Heatmap Card -->
+<div class="col-span-12 lg:col-span-8 glass-panel rounded-xl p-6 relative overflow-hidden">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h3 class="font-headline-md text-headline-md">Mastery Deep-Dive</h3>
+<p class="text-on-surface-variant text-body-sm">Daily intensity mapping over 24 weeks</p>
+</div>
+<div class="flex items-center gap-4">
+<select class="bg-white/5 border-white/10 rounded-lg text-xs py-1 px-3 focus:ring-0">
+<option>All Topics</option>
+<option>Quantum Computing</option>
+<option>Macroeconomics</option>
+</select>
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-on-surface-variant">Less</span>
+<div class="w-3 h-3 bg-white/5 rounded-sm"></div>
+<div class="w-3 h-3 bg-primary/30 rounded-sm"></div>
+<div class="w-3 h-3 bg-primary/60 rounded-sm"></div>
+<div class="w-3 h-3 bg-primary rounded-sm"></div>
+<span class="text-[10px] text-on-surface-variant">More</span>
+</div>
+</div>
+</div>
+<!-- Heatmap Grid Logic -->
+<div class="grid grid-flow-col grid-rows-7 gap-1.5 h-48">
+<!-- Generating a grid of ~168 squares (24 weeks * 7 days) -->
+<script>
+                        const gridContainer = document.currentScript.parentElement;
+                        for(let i = 0; i < 168; i++) {
+                            const opacity = Math.random() > 0.3 ? (Math.random() * 0.9 + 0.1).toFixed(1) : 0.05;
+                            const div = document.createElement('div');
+                            div.className = `heatmap-square rounded-sm bg-primary`;
+                            div.style.opacity = opacity;
+                            gridContainer.appendChild(div);
+                        }
+                    </script>
+</div>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant uppercase tracking-widest px-1">
+<span>Jun</span>
+<span>Jul</span>
+<span>Aug</span>
+<span>Sep</span>
+<span>Oct</span>
+<span>Nov</span>
+<span>Dec</span>
+</div>
+</div>
+<!-- Quiz Trends Bar Chart Widget -->
+<div class="col-span-12 lg:col-span-4 glass-panel rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md mb-1">Subject Accuracy</h3>
+<p class="text-on-surface-variant text-body-sm mb-8">Performance vs Global Benchmark</p>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span>Neuroscience</span>
+<span class="text-primary">94%</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 94%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span>Ethics in AI</span>
+<span class="text-secondary">82%</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 82%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span>Abstract Algebra</span>
+<span class="text-primary-container">67%</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 67%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span>Creative Writing</span>
+<span class="text-primary">89%</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 89%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Learning Consistency (Line Chart Simulation) -->
+<div class="col-span-12 lg:col-span-7 glass-panel rounded-xl p-6">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md">Learning Consistency</h3>
+<p class="text-on-surface-variant text-body-sm">Weekly focus hours over time</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs text-on-surface-variant">Focus Mode</span>
+</div>
+<div class="flex items-center gap-1.5 ml-4">
+<span class="w-2 h-2 rounded-full bg-white/20"></span>
+<span class="text-xs text-on-surface-variant">Casual Reading</span>
+</div>
+</div>
+</div>
+<div class="h-64 relative flex items-end justify-between px-2 overflow-hidden">
+<!-- SVG Simulation for Line Chart -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 800 256">
+<path d="M0 200 Q 100 180, 200 120 T 400 140 T 600 60 T 800 80 L 800 256 L 0 256 Z" fill="url(#grad1)" fill-opacity="0.2"></path>
+<path d="M0 200 Q 100 180, 200 120 T 400 140 T 600 60 T 800 80" fill="none" stroke="#d0bcff" stroke-linecap="round" stroke-width="3"></path>
+<defs>
+<lineargradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#d0bcff;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#d0bcff;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between py-2 pointer-events-none opacity-10">
+<div class="w-full h-[1px] bg-white"></div>
+<div class="w-full h-[1px] bg-white"></div>
+<div class="w-full h-[1px] bg-white"></div>
+<div class="w-full h-[1px] bg-white"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] text-on-surface-variant font-medium">
+<span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+</div>
+</div>
+<!-- Flashcard Retention Metric Card -->
+<div class="col-span-12 lg:col-span-5 glass-panel rounded-xl p-6 flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-1">Knowledge Retention</h3>
+<p class="text-on-surface-variant text-body-sm mb-6">Spaced repetition efficacy</p>
+<div class="flex-1 flex items-center justify-center relative">
+<!-- Circular Progress -->
+<div class="relative w-48 h-48">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
+<circle class="transition-all duration-1000 ease-out" cx="50" cy="50" fill="transparent" r="40" stroke="#d0bcff" stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-4xl font-bold font-display">75%</span>
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant">Efficacy</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="bg-white/5 rounded-lg p-3 border border-white/5">
+<p class="text-[10px] text-on-surface-variant uppercase mb-1">Cards Mastered</p>
+<p class="text-lg font-bold">1,204</p>
+</div>
+<div class="bg-white/5 rounded-lg p-3 border border-white/5">
+<p class="text-[10px] text-on-surface-variant uppercase mb-1">Review Time</p>
+<p class="text-lg font-bold">14.2m/day</p>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Assistant / Context Panel (Sidebar Right Style) -->
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-12 glass-panel rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+<!-- Abstract Animation Placeholder Background -->
+
+<div class="relative z-10 w-24 h-24 flex-shrink-0 bg-primary/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="relative z-10 flex-1 text-center md:text-left">
+<h4 class="font-headline-md text-headline-md mb-2">NoteSage AI Intelligence Advisor</h4>
+<p class="text-body-md text-on-surface-variant mb-6">Based on your recent activity, you are struggling with "Multivariable Calculus" concepts but showing exceptional progress in "Behavioral Economics." We suggest focusing on visual flashcards for calculus tomorrow morning during your peak cognitive window (8:00 AM - 10:00 AM).</p>
+<div class="flex flex-wrap gap-3 justify-center md:justify-start">
+<span class="bg-surface-container-highest px-3 py-1.5 rounded-full text-xs border border-white/10">Schedule Review Session</span>
+<span class="bg-surface-container-highest px-3 py-1.5 rounded-full text-xs border border-white/10">Refine Study Plan</span>
+<span class="bg-surface-container-highest px-3 py-1.5 rounded-full text-xs border border-white/10">View Detailed Gap Analysis</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction Script for Heatmap Tooltips -->
+<script>
+        document.querySelectorAll('.heatmap-square').forEach(el => {
+            el.addEventListener('mouseenter', (e) => {
+                const tooltip = document.createElement('div');
+                tooltip.id = 'heatmap-tooltip';
+                tooltip.className = 'fixed bg-slate-800 text-white text-[10px] px-2 py-1 rounded border border-white/20 z-[60] pointer-events-none shadow-xl';
+                tooltip.innerText = `Intensity: ${Math.floor(parseFloat(e.target.style.opacity) * 10)} / 10`;
+                document.body.appendChild(tooltip);
+                
+                const moveTooltip = (ev) => {
+                    tooltip.style.left = ev.clientX + 10 + 'px';
+                    tooltip.style.top = ev.clientY - 25 + 'px';
+                };
+                
+                e.target.addEventListener('mousemove', moveTooltip);
+                e.target.addEventListener('mouseleave', () => {
+                    tooltip.remove();
+                    e.target.removeEventListener('mousemove', moveTooltip);
+                }, { once: true });
+            });
+        });
+    </script>
+</body></html>

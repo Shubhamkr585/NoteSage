@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NoteSage | Flashcards Module</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card-flipped {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(208, 188, 255, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#8990a8",
+                        "surface-variant": "#273647",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "tertiary-fixed": "#dae2fd",
+                        "on-secondary": "#002e6a",
+                        "on-primary": "#3c0091",
+                        "on-error": "#690005",
+                        "on-tertiary": "#283044",
+                        "on-primary-fixed-variant": "#5516be",
+                        "surface-dim": "#051424",
+                        "on-surface-variant": "#cbc3d7",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-container-high": "#1c2b3c",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#273647",
+                        "surface-container-low": "#0d1c2d",
+                        "inverse-on-surface": "#233143",
+                        "on-secondary-container": "#e6ecff",
+                        "on-primary-fixed": "#23005c",
+                        "secondary-container": "#0566d9",
+                        "tertiary": "#bec6e0",
+                        "primary": "#d0bcff",
+                        "surface-container-lowest": "#010f1f",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-surface": "#d4e4fa",
+                        "surface-bright": "#2c3a4c",
+                        "error-container": "#93000a",
+                        "primary-fixed": "#e9ddff",
+                        "secondary": "#adc6ff",
+                        "on-tertiary-container": "#22293d",
+                        "inverse-surface": "#d4e4fa",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "outline-variant": "#494454",
+                        "surface": "#051424",
+                        "background": "#051424",
+                        "on-tertiary-fixed": "#131b2e",
+                        "primary-container": "#a078ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "inverse-primary": "#6d3bd7",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#340080",
+                        "surface-container": "#122131",
+                        "primary-fixed-dim": "#d0bcff",
+                        "outline": "#958ea0",
+                        "surface-tint": "#d0bcff",
+                        "error": "#ffb4ab",
+                        "on-background": "#d4e4fa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Geist"],
+                        "display": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden selection:bg-primary/30">
+<!-- Sidebar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-slate-900/70 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col py-8 px-6 hidden md:flex">
+<div class="mb-10">
+<h1 class="text-headline-md font-headline-md font-bold text-primary tracking-tight">NoteSage</h1>
+<p class="text-on-surface-variant text-label-md font-label-md mt-1 opacity-70">AI Workspace</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary font-bold border-r-2 border-primary bg-white/5" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+                Library
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+                Research
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Insights
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+<button class="mt-auto w-full bg-primary-container text-on-primary-container font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xl" data-icon="add">add</span>
+            New Project
+        </button>
+<div class="mt-8 pt-8 border-t border-white/5 flex gap-4">
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help_outline">help_outline</span>
+<span class="text-label-sm font-label-sm">Help</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="security">security</span>
+<span class="text-label-sm font-label-sm">Privacy</span>
+</a>
+</div>
+</aside>
+<!-- Topbar (Shared Component) -->
+<header class="fixed top-0 right-0 w-full md:w-[calc(100%-280px)] z-40 bg-surface/70 backdrop-blur-md border-b border-white/10 h-16 px-4 md:px-margin-desktop flex justify-between items-center">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-label-md focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/40" placeholder="Search flashcards or docs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a student in a minimalist creative workspace, softly lit with cool blue and purple atmospheric lighting to match a high-tech study application's color scheme. The lighting is crisp and the expression is focused, conveying intelligence and curiosity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByeh9IroUMfcXgbQrmhQpafc_Xsq0h8CBK5jgN8USg5EzTii_HGGvQoVbj6BAbThYTVIu8SlhJh7fhOQAqd2QQisCTedFQSHtumBi2jTNoNlEnAh6jMFfZ7ziz4CcnWbDETE48EMYC_hjIHHZMkQsF_q2Mlm34-lfSEhLka3De743QNONbFDfM5F_2T58MQrbDCKaaD9Lb-8Lgg_-ZhaWdGwWHhOx1LtG6m7QbN2ACdkfwif27u4winFyqaDH8-FCtBJEvLSDQDq_4"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-24 pb-12 px-4 md:pl-[320px] md:pr-margin-desktop">
+<!-- Header & AI Generation Action -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<nav class="flex items-center gap-2 text-on-surface-variant text-label-sm font-label-sm mb-4 opacity-60">
+<a class="hover:text-primary" href="#">Library</a>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-medium">Flashcards</span>
+</nav>
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Knowledge Vault</h2>
+<p class="text-on-surface-variant mt-2 max-w-lg">Master your subjects with AI-driven spaced repetition. Generate decks directly from your research papers and meeting notes.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all flex items-center gap-2 text-on-surface font-medium group">
+<span class="material-symbols-outlined text-primary group-hover:rotate-45 transition-transform" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                    AI Generate
+                </button>
+<button class="px-6 py-3 rounded-xl bg-primary text-on-primary-container font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                    Create Deck
+                </button>
+</div>
+</section>
+<!-- Bento Grid of Decks -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[240px]">
+<!-- Featured Study Deck (Large) -->
+<div class="md:col-span-8 bg-surface-container rounded-3xl p-8 border border-white/5 glass-panel relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-colors duration-700"></div>
+<div class="relative z-10 h-full flex flex-col">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-2xl bg-primary-container/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="neuroscience" style="font-variation-settings: 'FILL' 1;">science</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md">Advanced Neural Networks</h3>
+<p class="text-on-surface-variant text-label-sm">48 Cards • Last studied 2 hours ago</p>
+</div>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-high px-3 py-1 rounded-full border border-white/5">
+<span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+<span class="text-label-sm text-secondary font-bold">Active Module</span>
+</div>
+</div>
+<div class="mt-auto flex items-center justify-between gap-8">
+<div class="flex-1">
+<div class="flex justify-between text-label-sm mb-2">
+<span class="text-on-surface-variant">Mastery Level</span>
+<span class="text-primary font-bold">72%</span>
+</div>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[72%]"></div>
+</div>
+</div>
+<button class="px-8 py-4 bg-on-background text-background font-bold rounded-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 whitespace-nowrap shadow-xl" onclick="toggleStudyModal()">
+                            Study Now
+                            <span class="material-symbols-outlined" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Smaller Deck Card -->
+<div class="md:col-span-4 bg-surface-container rounded-3xl p-6 border border-white/5 flex flex-col group cursor-pointer hover:border-primary/30 transition-all">
+<div class="flex justify-between mb-4">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="code" style="font-variation-settings: 'FILL' 1;">code</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+<h4 class="font-headline-md text-xl mb-1">Rust Programming</h4>
+<p class="text-on-surface-variant text-label-sm mb-6">124 Cards • AI Generated</p>
+<div class="mt-auto">
+<div class="flex justify-between text-label-sm mb-2">
+<span class="opacity-60">Mastery</span>
+<span class="text-secondary font-bold">45%</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full w-[45%]"></div>
+</div>
+</div>
+</div>
+<!-- Smaller Deck Card -->
+<div class="md:col-span-4 bg-surface-container rounded-3xl p-6 border border-white/5 flex flex-col group cursor-pointer hover:border-primary/30 transition-all">
+<div class="flex justify-between mb-4">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="history_edu" style="font-variation-settings: 'FILL' 1;">history_edu</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+<h4 class="font-headline-md text-xl mb-1">Philosophy 101</h4>
+<p class="text-on-surface-variant text-label-sm mb-6">32 Cards • Manual Entry</p>
+<div class="mt-auto">
+<div class="flex justify-between text-label-sm mb-2">
+<span class="opacity-60">Mastery</span>
+<span class="text-tertiary font-bold">89%</span>
+</div>
+<div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full w-[89%]"></div>
+</div>
+</div>
+</div>
+<!-- AI Suggestion Card -->
+<div class="md:col-span-8 bg-surface-container rounded-3xl border border-dashed border-white/20 p-8 flex items-center justify-between group hover:border-primary/50 transition-all bg-gradient-to-br from-surface-container to-surface-container-high/40">
+<div class="max-w-md">
+<span class="px-3 py-1 bg-primary/10 text-primary text-[10px] uppercase font-bold rounded-full mb-3 inline-block">AI Observation</span>
+<h4 class="text-headline-md mb-2">New source detected</h4>
+<p class="text-on-surface-variant text-body-sm">We noticed you just finished "Quantum Mechanics Intro". Want to generate a deck from these notes?</p>
+</div>
+<button class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
+<span class="material-symbols-outlined text-3xl" data-icon="magic_button">magic_button</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Study Modal Overlay (Flipped Card State Focus) -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 px-4" id="studyModal">
+<div class="max-w-4xl w-full">
+<!-- Modal Header -->
+<div class="flex justify-between items-center mb-8">
+<div class="flex items-center gap-6">
+<button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors" onclick="toggleStudyModal()">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+<div>
+<h4 class="font-headline-md">Advanced Neural Networks</h4>
+<div class="flex gap-2 mt-1">
+<div class="h-1 w-12 bg-primary rounded-full"></div>
+<div class="h-1 w-12 bg-primary rounded-full"></div>
+<div class="h-1 w-12 bg-white/20 rounded-full"></div>
+<div class="h-1 w-12 bg-white/20 rounded-full"></div>
+<div class="h-1 w-12 bg-white/20 rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="text-right">
+<span class="text-primary font-bold text-headline-md">12/48</span>
+<p class="text-label-sm text-on-surface-variant opacity-60">Cards reviewed</p>
+</div>
+</div>
+<!-- Interactive Flip Card -->
+<div class="relative w-full aspect-[16/9] perspective-1000">
+<div class="flip-card-inner relative w-full h-full cursor-pointer flip-card-flipped" id="flashcard">
+<!-- Front Side (Term) -->
+<div class="flip-card-front absolute inset-0 bg-surface-container rounded-[40px] border border-white/10 shadow-2xl flex flex-col items-center justify-center p-12 text-center">
+<span class="text-primary/40 mb-8 uppercase tracking-[0.2em] font-bold text-label-sm">The Question</span>
+<h1 class="text-4xl md:text-5xl font-headline-lg text-on-surface max-w-2xl leading-tight">What is the vanishing gradient problem in deep learning?</h1>
+<p class="mt-12 text-on-surface-variant italic">Tap to reveal answer</p>
+</div>
+<!-- Back Side (Definition) - The 'Flipped' State requested -->
+<div class="flip-card-back absolute inset-0 bg-surface-container rounded-[40px] border border-primary/20 shadow-2xl shadow-primary/5 flex flex-col p-12 overflow-hidden">
+<div class="flex justify-between items-start mb-8">
+<span class="text-secondary/60 uppercase tracking-[0.2em] font-bold text-label-sm">The Definition</span>
+<button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="volume_up">volume_up</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar pr-4">
+<h2 class="text-3xl font-headline-md text-primary mb-6">Vanishing Gradient</h2>
+<p class="text-body-lg text-on-surface-variant leading-relaxed">
+                                The vanishing gradient problem occurs during the training of deep neural networks when the gradients of the loss function approach zero, making it nearly impossible for the network to update its weights. 
+                            </p>
+<p class="mt-4 text-body-lg text-on-surface-variant leading-relaxed">
+                                This typically happens in architectures with many layers (deep networks) when using activation functions like <strong class="text-on-surface">Sigmoid</strong> or <strong class="text-on-surface">Tanh</strong>, where the derivative is very small for large input values.
+                            </p>
+<div class="mt-8 p-6 bg-primary/5 rounded-2xl border border-primary/10">
+<h5 class="text-label-md text-primary font-bold mb-2">Key takeaway:</h5>
+<p class="text-body-sm text-on-surface">Results in very slow or stalled training of early layers in a network.</p>
+</div>
+</div>
+<!-- Feedback Buttons -->
+<div class="mt-10 flex gap-4">
+<button class="flex-1 py-5 rounded-2xl bg-surface-container-highest text-on-surface font-bold hover:bg-error-container/20 hover:text-error transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform" data-icon="replay">replay</span>
+                                Need more practice
+                            </button>
+<button class="flex-1 py-5 rounded-2xl bg-primary text-on-primary-container font-bold shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Got it
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Study Stats / Navigation -->
+<div class="flex justify-between items-center mt-8 px-4">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="keyboard_arrow_left">keyboard_arrow_left</span>
+                    Previous card
+                </button>
+<div class="flex gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-white/20"></div>
+</div>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+                    Skip card
+                    <span class="material-symbols-outlined" data-icon="keyboard_arrow_right">keyboard_arrow_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Floating AI Context Panel (Mini) -->
+<div class="fixed bottom-8 right-8 z-30">
+<button class="w-14 h-14 rounded-full bg-primary-container text-on-primary-container shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 active:scale-90 transition-all group">
+<span class="material-symbols-outlined text-2xl" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<div class="absolute right-full mr-4 px-4 py-2 bg-surface-container-highest border border-white/10 rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all pointer-events-none">
+<span class="text-label-md">Ask Sage about this card</span>
+</div>
+</button>
+</div>
+<script>
+        const studyModal = document.getElementById('studyModal');
+        const flashcard = document.getElementById('flashcard');
+
+        function toggleStudyModal() {
+            if (studyModal.classList.contains('opacity-0')) {
+                studyModal.classList.remove('opacity-0', 'pointer-events-none');
+                studyModal.classList.add('opacity-100');
+            } else {
+                studyModal.classList.add('opacity-0', 'pointer-events-none');
+                studyModal.classList.remove('opacity-100');
+            }
+        }
+
+        flashcard.addEventListener('click', (e) => {
+            // Prevent flip if clicking feedback buttons
+            if (e.target.closest('button')) return;
+            flashcard.classList.toggle('flip-card-flipped');
+        });
+
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                studyModal.classList.add('opacity-0', 'pointer-events-none');
+                studyModal.classList.remove('opacity-100');
+            }
+        });
+    </script>
+</body></html>
