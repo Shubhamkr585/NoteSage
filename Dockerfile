@@ -9,7 +9,7 @@ WORKDIR /app
 
 # Install dependencies based on the package manager
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Rebuild the source code only when needed
 FROM base AS builder
