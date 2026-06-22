@@ -23,6 +23,12 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Generate prisma client before build
 RUN npx prisma generate
 
+# Provide dummy build-time environment variables so Next.js static evaluation doesn't crash
+ENV GEMINI_API_KEY="dummy"
+ENV GOOGLE_API_KEY="dummy"
+ENV BETTER_AUTH_SECRET="dummy"
+ENV BETTER_AUTH_URL="http://localhost:3000"
+
 RUN npm run build
 
 # Production image, copy all the files and run next
