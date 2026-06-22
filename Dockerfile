@@ -28,6 +28,10 @@ ENV GEMINI_API_KEY="dummy"
 ENV GOOGLE_API_KEY="dummy"
 ENV BETTER_AUTH_SECRET="dummy"
 ENV BETTER_AUTH_URL="http://localhost:3000"
+ENV AWS_ACCESS_KEY_ID="dummy"
+ENV AWS_SECRET_ACCESS_KEY="dummy"
+ENV AWS_REGION="dummy"
+ENV AWS_S3_BUCKET="dummy"
 
 RUN npm run build
 
