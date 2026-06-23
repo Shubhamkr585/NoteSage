@@ -102,15 +102,16 @@ export function AuthForm({ type }: AuthFormProps) {
           email: values.email,
           password: values.password,
           name: (values as any).name || "",
+          callbackURL: "/dashboard",
         });
 
         if (error) {
           setError(error.message || "Something went wrong.");
         } else {
-          setSuccess("User created successfully! You can now log in.");
+          setSuccess("Account created! Please check your email to verify your account.");
           form.reset();
           setTimeout(() => {
-            router.push("/login");
+            router.push("/verify-email");
           }, 2000);
         }
       }

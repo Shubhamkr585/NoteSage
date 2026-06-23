@@ -13,6 +13,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/login");
   }
 
+  if (!session.user.emailVerified) {
+    redirect("/verify-email");
+  }
+
   return (
     <>
       <Sidebar />
