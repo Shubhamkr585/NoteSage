@@ -157,6 +157,11 @@ To scaffold a study plan:
 1.  **Frontend/Backend:** Pushed to GitHub -> Vercel detects change -> Builds Next.js -> Deploys to Edge/Serverless.
 2.  **Database:** Hosted on AWS RDS / Supabase. Migrations run automatically via GitHub Actions (`npx prisma migrate deploy`) before the Vercel build finishes.
 
+### Errors Faced During Deployment
+*   *Error:* `PrismaConfigEnvError: Cannot resolve environment variable: DATABASE_URL` during `docker compose up --build` on AWS.
+*   *Context:* When building the Docker image using a multi-stage `Dockerfile`, the step `RUN npx prisma generate` failed because Docker environments do not automatically read the local `.env` file for security reasons. Prisma strictly requires `DATABASE_URL` to exist in the environment to compile its schema.
+*   *Solution:* We do not want to hardcode our real production database URL inside the Dockerfile layer. Instead, we provided a fake, dummy variable strictly for the build phase: `ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"` placed right before `RUN npx prisma generate`. This satisfies Prisma's schema parser, allows the client to generate, and then at runtime (when the container actually starts), Docker Compose injects the *real* `DATABASE_URL` from the `.env` file.
+
 ---
 ---
 

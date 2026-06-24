@@ -20,10 +20,8 @@ COPY . .
 # Disable telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Generate prisma client before build
-RUN npx prisma generate
-
-# Provide dummy build-time environment variables so Next.js static evaluation doesn't crash
+# Provide dummy build-time environment variables so Prisma and Next.js don't crash
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 ENV GEMINI_API_KEY="dummy"
 ENV GOOGLE_API_KEY="dummy"
 ENV BETTER_AUTH_SECRET="dummy"
@@ -34,6 +32,9 @@ ENV S3_REGION="dummy"
 ENV S3_BUCKET_NAME="dummy"
 ENV GOOGLE_CLIENT_ID="dummy"
 ENV GOOGLE_CLIENT_SECRET="dummy"
+
+# Generate prisma client before build
+RUN npx prisma generate
 
 RUN npm run build
 
