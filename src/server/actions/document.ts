@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { DocType } from "@prisma/client";
 import { processDocument } from "@/server/services/document-processor";
 
@@ -54,14 +55,17 @@ export async function createDocument(title: string, s3Key: string, type: DocType
     },
   });
 
-  // Start document processing asynchronously in the background to prevent timeouts
-  processDocument(doc.id)
-    .then((res) => {
-      console.log(`[Ingestion] Async document processing succeeded for document ${doc.id}:`, res);
-    })
-    .catch((err) => {
-      console.error(`[Ingestion] Async document processing failed for document ${doc.id}:`, err);
-    });
+  // Start document processing asynchronously in the background using Next.js after() API
+  // This guarantees the production execution context isn't dropped after the response returns.
+  after(() => {
+    processDocument(doc.id)
+      .then((res) => {
+        console.log(`[Ingestion] Async document processing succeeded for document ${doc.id}:`, res);
+      })
+      .catch((err) => {
+        console.error(`[Ingestion] Async document processing failed for document ${doc.id}:`, err);
+      });
+  });
 
   revalidatePath("/documents");
   return doc;
