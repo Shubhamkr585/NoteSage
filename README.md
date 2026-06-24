@@ -20,6 +20,33 @@ Modern students and lifelong learners are overwhelmed by static materials (PDFs,
 
 ---
 
+## 📖 How to Use NoteSage
+
+### 1. Uploading Documents
+* Navigate to the **Documents** section via the sidebar.
+* Click the **Upload Document** button and select a PDF.
+* *Note: The document will go into a "Processing" state while the AI extracts text, generates vector embeddings, and stores them. Wait until it completes before chatting.*
+
+### 2. Document Chat (RAG)
+* Navigate to the **Study Chat** section.
+* Use the dropdown menu in the top-right corner to select the document you want to chat with.
+* Ask any question! The AI will search the document and generate an answer based **only** on the uploaded textbook/notes.
+
+### 3. Generating Flashcards
+* Navigate to the **Flashcards** section.
+* In the top-right corner, select an unstudied document from the dropdown.
+* Click the **AI Generate Deck** button (the sparkly wand icon).
+* The AI will automatically extract the most important concepts and create active-recall flashcards.
+* Click **Study** on the generated deck to flip through cards and rate your mastery (Got it vs Need Practice).
+
+### 4. Taking AI Quizzes
+* Navigate to the **Quizzes** section.
+* Click **Generate Quiz** and select the documents you want to be tested on.
+* Choose your desired difficulty (Easy, Medium, Hard) and the number of questions.
+* Take the multiple-choice test and receive immediate grading!
+
+---
+
 ## 🏛 Architecture Documentation
 
 ### System Overview
@@ -140,42 +167,7 @@ flowchart TD
 ### Storage
 - **AWS S3:** Scalable, durable object storage for uploaded PDFs. We use pre-signed URLs to keep uploads secure and offload bandwidth from the Next.js server.
 
----
 
-## Database Design
-
-### ER Diagram
-```mermaid
-erDiagram
-    USER ||--o{ SESSION : has
-    USER ||--o{ DOCUMENT : owns
-    USER ||--o{ CHAT : owns
-    USER ||--o{ FLASHCARD : creates
-    USER ||--o{ QUIZ : takes
-    USER ||--o{ STUDYPLAN : creates
-
-    DOCUMENT ||--o{ DOCUMENTCHUNK : split_into
-    CHAT ||--o{ MESSAGE : contains
-    QUIZ ||--o{ QUIZQUESTION : contains
-    STUDYPLAN ||--o{ STUDYTASK : contains
-
-    DOCUMENT {
-        string id PK
-        string title
-        string s3Key
-    }
-    
-    DOCUMENTCHUNK {
-        string id PK
-        string documentId FK
-        string content
-        vector embedding
-    }
-```
-
-### Indexing Strategy
-The `DocumentChunk.embedding` column uses PostgreSQL's `vector` type. 
-*(Note: Advanced indexing strategies like HNSW or IVFFlat for production-level low-latency vector similarity searches have not yet been implemented in the Prisma schema).*
 
 ---
 
