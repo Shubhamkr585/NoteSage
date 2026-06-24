@@ -77,8 +77,14 @@ export async function processDocument(documentId: string) {
       success: true,
       chunks: splitDocs.length,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error(`[Processor] Failed to process document ${documentId}`, error);
+    try {
+      await db.document.update({
+        where: { id: documentId },
+        data: { title: `ERR: ${error?.message || "Unknown processing error"}`.substring(0, 200) }
+      });
+    } catch (e) {} // ignore if db fails here
     throw error;
   }
 }
