@@ -68,7 +68,11 @@ export function FlashcardClient({ initialDecks, documents }: FlashcardClientProp
     if (!docId) return;
     startGenerateTransition(async () => {
       try {
-        await createFlashcardDeckAction(docId);
+        const res = await createFlashcardDeckAction(docId);
+        if (res && !res.success) {
+          toast.error(`Failed to generate: ${res.error}`);
+          return;
+        }
         router.refresh();
         setSelectedDocId("");
         toast.success("Flashcards generated successfully!");

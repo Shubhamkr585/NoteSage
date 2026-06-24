@@ -32,7 +32,8 @@ export async function processDocument(documentId: string) {
     let extractedText = "";
 
     if (document.type === "PDF") {
-      const { PDFParse } = await import("pdf-parse");
+      const pdfParseModule = await import("pdf-parse");
+      const pdf = (pdfParseModule.default || pdfParseModule) as any;
       const uint8Array = await retryWithBackoff(async () => {
         const response = await fetch(fileUrl);
         if (!response.ok) throw new Error("Failed to fetch file from S3");
@@ -40,8 +41,7 @@ export async function processDocument(documentId: string) {
         return new Uint8Array(arrayBuffer);
       });
       const textResult = await retryWithBackoff(async () => {
-        const parser = new PDFParse({ data: uint8Array });
-        return parser.getText();
+        return pdf(Buffer.from(uint8Array));
       });
       extractedText = textResult.text;
     } else {

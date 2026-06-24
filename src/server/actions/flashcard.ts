@@ -59,37 +59,42 @@ export async function getFlashcardDecks() {
 }
 
 export async function createFlashcardDeckAction(documentId: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session || !session.user?.id) throw new Error("Unauthorized");
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session || !session.user?.id) return { success: false, error: "Unauthorized" };
 
-  // Check if document exists and belongs to user
-  const doc = await db.document.findUnique({
-    where: { id: documentId, userId: session.user.id },
-  });
-  if (!doc) throw new Error("Document not found");
+    // Check if document exists and belongs to user
+    const doc = await db.document.findUnique({
+      where: { id: documentId, userId: session.user.id },
+    });
+    if (!doc) return { success: false, error: "Document not found" };
 
-  // Call Gemini to generate
-  const generated = await generateFlashcardsFromDocument(documentId);
+    // Call Gemini to generate
+    const generated = await generateFlashcardsFromDocument(documentId);
 
-  // Bulk create in DB
-  const createPromises = generated.map((card) =>
-    db.flashcard.create({
-      data: {
-        userId: session.user.id,
-        documentId: documentId,
-        question: card.question,
-        answer: card.answer,
-        difficulty: 0,
-        nextReview: new Date(),
-      },
-    })
-  );
+    // Bulk create in DB
+    const createPromises = generated.map((card) =>
+      db.flashcard.create({
+        data: {
+          userId: session.user.id,
+          documentId: documentId,
+          question: card.question,
+          answer: card.answer,
+          difficulty: 0,
+          nextReview: new Date(),
+        },
+      })
+    );
 
-  await Promise.all(createPromises);
+    await Promise.all(createPromises);
 
-  revalidatePath("/flashcards");
+    revalidatePath("/flashcards");
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to generate flashcards" };
+  }
 }
 
 export async function updateFlashcardReviewAction(cardId: string, gotIt: boolean) {
