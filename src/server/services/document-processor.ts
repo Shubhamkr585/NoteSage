@@ -32,18 +32,15 @@ export async function processDocument(documentId: string) {
     let extractedText = "";
 
     if (document.type === "PDF") {
-      const pdfParseModule = await import("pdf-parse");
-      const pdf = (pdfParseModule.default || pdfParseModule) as any;
-      const uint8Array = await retryWithBackoff(async () => {
+      const { WebPDFLoader } = await import("@langchain/community/document_loaders/web/pdf");
+      const textDocs = await retryWithBackoff(async () => {
         const response = await fetch(fileUrl);
         if (!response.ok) throw new Error("Failed to fetch file from S3");
-        const arrayBuffer = await response.arrayBuffer();
-        return new Uint8Array(arrayBuffer);
+        const blob = await response.blob();
+        const loader = new WebPDFLoader(blob);
+        return loader.load();
       });
-      const textResult = await retryWithBackoff(async () => {
-        return pdf(Buffer.from(uint8Array));
-      });
-      extractedText = textResult.text;
+      extractedText = textDocs.map((doc: any) => doc.pageContent).join("\n\n");
     } else {
       // Plain text
       extractedText = await retryWithBackoff(async () => {
