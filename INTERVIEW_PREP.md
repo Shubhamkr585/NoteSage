@@ -158,6 +158,10 @@ To scaffold a study plan:
 2.  **Database:** Hosted on AWS RDS / Supabase. Migrations run automatically via GitHub Actions (`npx prisma migrate deploy`) before the Vercel build finishes.
 
 ### Errors Faced During Deployment
+*   *Error:* `Error response from daemon: ... no space left on device` or `Failed to open /tmp/next-panic...log` during Docker build.
+*   *Context:* AWS EC2 instances (especially t2/t3.micro) often start with small 8GB root volumes. Running `docker build` frequently leaves behind gigabytes of "dangling" images, unused build caches, and old container layers. Eventually, the server runs completely out of hard drive space, causing Next.js to panic during the build step and Docker to fail to create overlays.
+*   *Solution:* We SSH into the EC2 instance and run `docker system prune -a --volumes -f` to aggressively delete all unused Docker images, stopped containers, and dangling build caches. This instantly frees up multiple gigabytes of space, allowing the deployment to succeed.
+
 *   *Error:* `PrismaConfigEnvError: Cannot resolve environment variable: DATABASE_URL` during `docker compose up --build` on AWS.
 *   *Context:* When building the Docker image using a multi-stage `Dockerfile`, the step `RUN npx prisma generate` failed because Docker environments do not automatically read the local `.env` file for security reasons. Prisma strictly requires `DATABASE_URL` to exist in the environment to compile its schema.
 *   *Solution:* We do not want to hardcode our real production database URL inside the Dockerfile layer. Instead, we provided a fake, dummy variable strictly for the build phase: `ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"` placed right before `RUN npx prisma generate`. This satisfies Prisma's schema parser, allows the client to generate, and then at runtime (when the container actually starts), Docker Compose injects the *real* `DATABASE_URL` from the `.env` file.
