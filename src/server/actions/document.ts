@@ -55,17 +55,16 @@ export async function createDocument(title: string, s3Key: string, type: DocType
     },
   });
 
-  // Start document processing asynchronously in the background using Next.js after() API
-  // This guarantees the production execution context isn't dropped after the response returns.
-  after(() => {
-    processDocument(doc.id)
-      .then((res) => {
-        console.log(`[Ingestion] Async document processing succeeded for document ${doc.id}:`, res);
-      })
-      .catch((err) => {
-        console.error(`[Ingestion] Async document processing failed for document ${doc.id}:`, err);
-      });
-  });
+  // Start document processing asynchronously in the background.
+  // Because we are deploying on a persistent AWS EC2 Node server (not Vercel Serverless),
+  // detached promises will naturally continue executing in the background without being killed.
+  processDocument(doc.id)
+    .then((res) => {
+      console.log(`[Ingestion] Async document processing succeeded for document ${doc.id}:`, res);
+    })
+    .catch((err) => {
+      console.error(`[Ingestion] Async document processing failed for document ${doc.id}:`, err);
+    });
 
   revalidatePath("/documents");
   return doc;
