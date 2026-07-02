@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { DocType } from "@prisma/client";
-import { processDocument } from "@/server/services/document-processor";
+import { documentQueue } from "@/lib/queue";
 
 export async function getUserDocuments() {
   const session = await auth.api.getSession({
@@ -55,16 +55,9 @@ export async function createDocument(title: string, s3Key: string, type: DocType
     },
   });
 
-  // Start document processing asynchronously in the background.
-  // Because we are deploying on a persistent AWS EC2 Node server (not Vercel Serverless),
-  // detached promises will naturally continue executing in the background without being killed.
-  processDocument(doc.id)
-    .then((res) => {
-      console.log(`[Ingestion] Async document processing succeeded for document ${doc.id}:`, res);
-    })
-    .catch((err) => {
-      console.error(`[Ingestion] Async document processing failed for document ${doc.id}:`, err);
-    });
+  // Dispatch job to BullMQ queue
+  await documentQueue.add("process-pdf", { documentId: doc.id });
+  console.log(`[Ingestion] Dispatched job for document ${doc.id}`);
 
   revalidatePath("/documents");
   return doc;

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DocumentsPage() {
   const documents = await getUserDocuments();
-  const hasProcessing = documents.some((doc) => doc._count.chunks === 0);
+  const hasProcessing = documents.some((doc) => doc.status !== "READY");
 
   return (
     <div className="max-w-[900px] mx-auto py-8 w-full">
@@ -86,13 +86,21 @@ export default async function DocumentsPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {doc._count.chunks > 0 ? (
+                  {doc.status === "READY" ? (
                     <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[11px] font-bold">
                       Ready
                     </span>
-                  ) : (
+                  ) : doc.status === "FAILED" ? (
+                    <span className="px-3 py-1 bg-error/10 text-error rounded-full text-[11px] font-bold">
+                      Failed
+                    </span>
+                  ) : doc.status === "UPLOADING" ? (
                     <span className="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-[11px]">
-                      Processing…
+                      Uploading...
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-[11px] font-bold animate-pulse">
+                      Processing...
                     </span>
                   )}
                   <form

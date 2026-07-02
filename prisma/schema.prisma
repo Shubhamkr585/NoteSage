@@ -82,11 +82,19 @@ model Document {
   title     String
   s3Key     String   // S3 Object Key
   type      DocType  // PDF, TEXT
+  status    DocumentStatus @default(UPLOADING)
   createdAt DateTime @default(now())
   
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   chunks    DocumentChunk[]
   flashcards Flashcard[]
+}
+
+enum DocumentStatus {
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
 }
 
 enum DocType {

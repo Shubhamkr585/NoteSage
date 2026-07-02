@@ -5,6 +5,27 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { storeChunksInVectorDb } from "./vectorStore";
 import { retryWithBackoff } from "@/lib/retry";
 
+// Polyfill DOM objects required by pdfjs-dist in Node.js / Next.js Server Components
+if (typeof global !== "undefined") {
+  if (typeof (global as any).DOMException === "undefined") {
+    (global as any).DOMException = class DOMException extends Error {
+      constructor(message: string, name: string) {
+        super(message);
+        this.name = name;
+      }
+    };
+  }
+  if (typeof (global as any).document === "undefined") {
+    (global as any).document = {
+      createElement: () => ({}),
+      documentElement: {},
+    };
+  }
+  if (typeof (global as any).window === "undefined") {
+    (global as any).window = global;
+  }
+}
+
 export async function processDocument(documentId: string) {
   console.log(`[Processor] Starting document processing for ${documentId}`);
 

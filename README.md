@@ -124,21 +124,34 @@ flowchart LR
     Auth -->|Set Cookie| Client
 ```
 
-### PDF Upload Flow
+### Asynchronous PDF Upload & Ingestion Flow (Redis + BullMQ)
+Because processing large PDFs (extracting text, generating 3072-dimensional vector embeddings via Gemini, and inserting into pgvector) takes significant time, we decouple the process using an asynchronous background queue. This prevents Next.js API timeouts and provides a snappy UX.
+
 ```mermaid
 flowchart TD
-    User([User]) -->|Selects File| Client
-    Client -->|1. Request Presigned URL| ServerAction
-    ServerAction -->|2. Create Document DB Record| DB[(PostgreSQL)]
-    ServerAction -->|3. Return URL| Client
-    Client -->|4. PUT File directly| S3[AWS S3]
-    Client -->|5. Trigger Ingestion| ServerAction
-    ServerAction -->|6. Fetch PDF| S3
-    ServerAction -->|7. Parse & Chunk| Langchain
-    Langchain -->|8. Generate Embeddings| Gemini
-    Gemini -->|9. Return Vectors| ServerAction
-    ServerAction -->|10. Store Chunks & Vectors| DB
+    User([User]) -->|1. Uploads PDF| NextJS
+    NextJS -->|2. Direct PUT| S3[AWS S3]
+    NextJS -->|3. Create Document status=UPLOADING| DB[(PostgreSQL)]
+    NextJS -->|4. Push Job Metadata| Redis[(Redis Queue)]
+    NextJS -->|5. Instant Success Response| User
+    
+    subgraph Background Worker Process
+    Worker[BullMQ Worker] -->|6. Pick up Job| Redis
+    Worker -->|7. Download PDF| S3
+    Worker -->|8. Extract Text & Chunk| Langchain
+    Langchain -->|9. Generate Embeddings| Gemini
+    Gemini -->|10. Return Vectors| Worker
+    Worker -->|11. Store Vectors & status=READY| DB
+    end
+    
+    User -->|12. Polls /api/documents/:id/status| NextJS
+    NextJS -->|13. Returns status=READY| User
 ```
+
+#### Why this Architecture?
+* **Zero Timeout Risk:** The frontend receives a 200 OK response instantly after upload. The heavy lifting is offloaded to a persistent Node.js worker.
+* **Resilience & Retries:** If the Gemini API rate limits us or goes down, BullMQ automatically retries the specific chunking job with exponential backoff.
+* **Memory Efficiency:** We never store the massive PDF binary in Redis (RAM). The file lives in AWS S3, and Redis only handles tiny JSON pointers (Job ID, Document ID, S3 Key).
 
 ---
 

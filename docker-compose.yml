@@ -9,6 +9,7 @@ services:
       - "80:3000" # Maps port 80 on the AWS EC2 instance to 3000 in the container
     environment:
       - DATABASE_URL=postgresql://postgres:notesage_secure_pass_123@db:5432/notesage?schema=public
+      - REDIS_URL=redis://redis:6379
       # Ensure you pass these environments from the EC2 host or a .env file
       - BETTER_AUTH_URL=${BETTER_AUTH_URL}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
@@ -21,6 +22,31 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     depends_on:
       - db
+      - redis
+    restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run worker
+    environment:
+      - DATABASE_URL=postgresql://postgres:notesage_secure_pass_123@db:5432/notesage?schema=public
+      - REDIS_URL=redis://redis:6379
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+      - S3_REGION=${S3_REGION}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
     restart: always
 
   db:

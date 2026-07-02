@@ -145,7 +145,30 @@ To scaffold a study plan:
 
 ---
 
-## 7. Scalability
+## 7. Asynchronous Background Queue Architecture (Redis + BullMQ)
+
+### The Problem with Serverless processing
+In Next.js (especially on Vercel), serverless functions have a strict execution timeout (usually 10-15 seconds). Processing a large PDF—extracting text, chunking, hitting the Gemini API for embeddings, and storing vectors—frequently takes 30+ seconds. 
+If we run this synchronously, the API times out, the user is left hanging, and the background execution context is abruptly killed.
+
+### The Solution: Redis + BullMQ
+We decouple the file upload from the actual processing using an asynchronous job queue.
+
+1.  **Fast Upload & Metadata Creation:** The user uploads the PDF directly to AWS S3. The Next.js API simply creates a `Document` record in PostgreSQL with `status = UPLOADING` and immediately pushes a job (containing just the `documentId` and `s3Key`) into a Redis queue using BullMQ.
+2.  **Instant UI Response:** The API returns a success response to the frontend in milliseconds. The UI displays "Processing..." or "Extracting text...".
+3.  **Independent Worker Process:** A completely separate Node.js worker process listens to the Redis queue. It picks up the job, downloads the PDF from S3, extracts the text, chunks it, generates embeddings, stores them in `pgvector`, and finally updates the PostgreSQL `Document` status to `READY`.
+4.  **UI Updates:** The frontend either polls the `/api/documents/:id/status` endpoint every few seconds, or listens via WebSockets/SSE. Once the status changes to `READY`, the chat interface is unlocked.
+
+### Why Redis?
+We never store the actual PDF binary in Redis (Redis is strictly RAM-based and that would be a massive waste of memory). We only store the *Job Metadata* (the ID of the document to process). 
+BullMQ running on Redis gives us out-of-the-box features that detached Next.js promises lack:
+*   **Automatic Retries:** If the Gemini API times out, BullMQ automatically retries the specific job using exponential backoff.
+*   **Concurrency Control:** We can throttle the worker to process exactly 5 PDFs at a time to prevent database connection exhaustion.
+*   **Persistent State:** If the AWS server reboots mid-processing, the jobs remain safe in Redis and resume when the server comes back online.
+
+---
+
+## 8. Scalability
 
 ### Scaling Tiers
 *   **100 Users:** A standard Postgres instance on Supabase and Vercel Hobby tier. No bottlenecks.
@@ -246,7 +269,15 @@ To scaffold a study plan:
 *Answer:* No, I intentionally avoided the AWS ECR registry workflow. Instead, I deployed NoteSage directly to a single EC2 instance using a `git pull` and `docker compose up --build` directly on the server itself. I chose this method to minimize cost and architectural friction for an MVP. Using AWS ECR (building locally, pushing to a registry, and pulling on the server) is an excellent pattern when you need to deploy identical images across a cluster of servers (like an Auto Scaling Group or ECS). However, since NoteSage runs on a single VPS (EC2), paying for ECR storage and managing IAM push/pull policies introduced unnecessary overhead. Building the image directly on the host machine is significantly faster and more cost-effective for solo developers.
 
 **Q12: Why did you deploy on AWS EC2 using Docker instead of using Vercel, which is the native platform for Next.js?**
-*Answer:* I chose AWS EC2 for two primary reasons: execution limits and architectural control. Vercel is built heavily around Serverless Functions, which have a strict 10-to-15 second timeout limit on free and hobby tiers. Because NoteSage processes large PDFs, extracts text, generates vector embeddings via the Gemini API, and performs heavy database transactions, these background jobs frequently exceeded the Vercel serverless limits and crashed. By deploying on a persistent Node.js server inside a Docker container on AWS EC2, I removed all timeout restrictions, allowing long-running RAG background tasks to complete successfully. Furthermore, deploying on AWS demonstrates a deeper understanding of Linux, networking, and Docker orchestration compared to the "one-click" deployment style of Vercel.
+*Answer:* I chose AWS EC2 for two primary reasons: execution limits and architectural control. Vercel is built heavily around Serverless Functions, which have a strict 10-to-15 second timeout limit on free and hobby tiers. Because NoteSage processes large PDFs, extracts text, generates vector embeddings, and performs heavy database transactions, these jobs frequently exceeded Vercel's limits. By deploying on a persistent EC2 instance, I was able to spin up a Redis container and implement a dedicated BullMQ background worker. This allows the Next.js API to respond instantly, while the separate worker securely processes the PDFs from the queue in the background with automatic retries and exponential backoff. This advanced message-broker architecture is impossible to achieve natively on standard Vercel Serverless without paying for external queue providers.
+
+**Q13: In your background worker architecture, why do you store the file in AWS S3 and only the job metadata in Redis? Why not put the file in Redis?**
+*Answer:* Redis is an in-memory data store. Storing large binary blobs like PDFs in RAM is an extreme anti-pattern and wastes incredibly expensive memory. The correct architecture is to store the heavy binary object in a cheap, durable object storage service like AWS S3. We then push a tiny JSON object into the Redis queue (e.g., `{ documentId: "123", s3Key: "uploads/file.pdf" }`). When the BullMQ worker picks up the job, it uses that metadata to download the file directly from S3, process it, and discard it from memory, keeping our Redis footprint virtually zero.
+
+**Q14: Your application only has 50 users. Why did you introduce BullMQ and Redis? Couldn't a single Node.js server handle that traffic without a message broker?**
+*Answer:* I agree that a single Node.js server could handle the traffic volume. I didn't introduce BullMQ to increase request throughput. I introduced it because PDF ingestion is a long-running, asynchronous, and failure-prone workflow. It involves downloading from S3, text extraction, generating hundreds of vector embeddings via an external AI API, and heavy database inserts. 
+
+If I kept that inside a standard HTTP request-response cycle (or just used a simple detached promise), a server restart or a 503 error from the Gemini API would cause the entire document to fail silently, forcing the user to re-upload. BullMQ persists the job state in Redis. This allows the API to return a 200 OK instantly, provides automatic exponential backoff retries for transient AI failures, survives server reboots, and allows the UI to poll the exact processing status (e.g., "Extracting text", "Generating embeddings"). I introduced BullMQ for architectural reliability and UX, not just raw user scale.
 
 ---
 *End of Documentation*

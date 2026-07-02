@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  serverExternalPackages: ["pdf-parse"],
+  serverExternalPackages: ["pdfjs-dist", "@langchain/community"],
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   turbopack: {
