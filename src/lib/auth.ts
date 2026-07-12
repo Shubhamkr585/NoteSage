@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { jwt } from "better-auth/plugins";
 import { db } from "./db";
 import nodemailer from "nodemailer";
 
@@ -15,6 +16,7 @@ export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: "postgresql",
   }),
+  plugins: [jwt()],
   trustedOrigins: [
     "https://notesage.traffic-intel.online",
     "http://localhost:3000"
