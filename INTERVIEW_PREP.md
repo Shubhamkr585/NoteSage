@@ -279,5 +279,11 @@ BullMQ running on Redis gives us out-of-the-box features that detached Next.js p
 
 If I kept that inside a standard HTTP request-response cycle (or just used a simple detached promise), a server restart or a 503 error from the Gemini API would cause the entire document to fail silently, forcing the user to re-upload. BullMQ persists the job state in Redis. This allows the API to return a 200 OK instantly, provides automatic exponential backoff retries for transient AI failures, survives server reboots, and allows the UI to poll the exact processing status (e.g., "Extracting text", "Generating embeddings"). I introduced BullMQ for architectural reliability and UX, not just raw user scale.
 
+**Q15: How exactly is the BullMQ retry mechanism and processing order implemented in NoteSage?**
+*Answer:* In our queue configuration (`src/lib/queue.ts`), we define default job options: `attempts: 3` and `backoff: { type: "exponential", delay: 5000 }`. If the background worker (`src/server/worker.ts`) throws an error (e.g., the Gemini API rate limits us), BullMQ catches it. It doesn't instantly retry; instead, it waits 5 seconds, then 25 seconds, then 125 seconds before retrying. This exponential backoff prevents us from hammering a failing external API. Additionally, we set `concurrency: 3` in the worker, meaning it will process exactly 3 PDFs in parallel regardless of how many are queued, preventing us from exhausting our database connections.
+
+**Q16: How are you hosting Redis? Did you use a managed service like AWS ElastiCache?**
+*Answer:* No, I intentionally avoided managed services like AWS ElastiCache or Upstash to keep infrastructure costs as close to $0 as possible. We are utilizing the free, open-source Redis Docker image (`redis:alpine`). I orchestrated it directly inside our `docker-compose.yml` file alongside the Next.js app and the PostgreSQL database. When deployed to our AWS EC2 `t3.micro` instance, Redis runs locally on that single machine. Since we only store tiny job metadata in Redis (not large PDFs), its memory footprint is minuscule and perfectly safe to run on a low-memory `t3.micro` instance. This provides enterprise-grade message queuing without the enterprise price tag.
+
 ---
 *End of Documentation*
