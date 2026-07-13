@@ -28,22 +28,6 @@ model User {
   sessions           Session[]
   accounts           Account[]
   // NoteSage Relations
-  id                 String      @id @default(cuid())
-  name               String
-  email              String      @unique
-  emailVerified      Boolean
-  image              String?
-  bio                String?     @default("Strategic design student focusing on cognitive psychology and knowledge management systems.")
-  theme              String      @default("dark")
-  accentColor        String      @default("#d0bcff")
-  emailNotifications Boolean     @default(true)
-  pushNotifications  Boolean     @default(false)
-  productUpdates     Boolean     @default(true)
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
-  sessions           Session[]
-  accounts           Account[]
-  // NoteSage Relations
   documents          Document[]
   chats              Chat[]
   flashcards         Flashcard[]
@@ -99,6 +83,9 @@ model Verification {
 }
 
 model Document {
+  id         String          @id @default(cuid())
+  userId     String
+  title      String
   s3Key      String // S3 Object Key
   type       DocType // PDF, TEXT
   status     DocumentStatus  @default(UPLOADING)
