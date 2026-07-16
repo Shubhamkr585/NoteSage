@@ -10,8 +10,8 @@ This document serves as both a comprehensive implementation guide for NoteSage a
 
 * **Why Chosen:** Next.js provides Server-Side Rendering (SSR) and Static Site Generation (SSG) out of the box, drastically improving initial page load times and SEO. React + Vite is excellent for Single Page Applications (SPAs), but Next.js offers a complete full-stack framework.
 * **Alternatives:** React + Vite, Remix, Nuxt.js.
-* **Why Rejected:** React + Vite requires manually setting up routing (React Router), API layers (Express), and SSR. Remix was a strong contender, but Next.js has a larger ecosystem and tighter integration with Vercel and modern React features (React Server Components).
-* **Tradeoffs:** Next.js introduces a steeper learning curve and tighter vendor lock-in with Vercel's edge infrastructure compared to a vanilla React app.
+* **Why Rejected:** React + Vite requires manually setting up routing (React Router), API layers (Express), and SSR. Remix was a strong contender, but Next.js has a larger ecosystem and tighter integration with modern React features (React Server Components).
+* **Tradeoffs:** Next.js introduces a steeper learning curve and traditionally pushes developers towards Vercel's infrastructure, though we intentionally circumvented this vendor lock-in by self-hosting natively on AWS EC2.
 
 ### App Router Architecture & Server vs. Client Components
 
@@ -129,8 +129,8 @@ Standard PDF parsing libraries (like `pdfjs-dist` or `WebPDFLoader`) frequently 
 
 ### Errors Faced & Solved
 
-* *Error:* The Next.js server timed out during large PDF uploads because PDF parsing and embedding generation took longer than Vercel's 10-second serverless function limit.
-* *Solution:* We decoupled the upload from the processing. The client uploads directly to S3 via a Pre-signed URL. We then trigger a background job to process the PDF asynchronously.
+* *Error:* The Next.js API thread timed out or became unresponsive during large PDF uploads because PDF parsing and embedding generation are heavily CPU-bound tasks.
+* *Solution:* We decoupled the upload from the processing. The client uploads directly to S3 via a Pre-signed URL. We then trigger a background worker process (running independently via PM2) to process the PDF asynchronously, keeping the main web server extremely fast.
 * *Error:* Vector searches frequently missed exact acronyms (e.g., "CPU").
 * *Solution:* We implemented the Hybrid Search (RRF) detailed above, combining semantic vector similarity with hard keyword matching (`to_tsquery`), drastically improving retrieval precision.
 
@@ -178,8 +178,8 @@ To scaffold a study plan:
 
 ### The Problem with Serverless processing
 
-In Next.js (especially on Vercel), serverless functions have a strict execution timeout (usually 10-15 seconds). Processing a large PDF—extracting text, chunking, hitting the Gemini API for embeddings, and storing vectors—frequently takes 30+ seconds.
-If we run this synchronously, the API times out, the user is left hanging, and the background execution context is abruptly killed.
+In standard Node.js applications, running heavy CPU-bound tasks (like parsing 50-page PDFs or generating embeddings) synchronously inside the main API route will completely block the event loop. This causes the entire server to freeze for other users and often results in HTTP timeouts.
+If we run this synchronously, the user is left hanging, and any transient network error (like an AI API failure) abruptly kills the request.
 
 ### The Solution: Redis + BullMQ
 
@@ -205,15 +205,15 @@ BullMQ running on Redis gives us out-of-the-box features that detached Next.js p
 
 ### Scaling Tiers
 
-* **100 Users:** A standard Postgres instance on Supabase and Vercel Hobby tier. No bottlenecks.
+* **100 Users:** A standard Postgres instance and our current AWS EC2 `t3.micro` deployment using PM2. No bottlenecks.
 * **1,000 Users:** Vector searches become a bottleneck. *Solution:* Add an HNSW index to `DocumentChunk.embedding`.
 * **10,000 Users:** Database connection limits hit (Postgres traditionally supports ~100 concurrent connections). *Solution:* Implement PgBouncer or Prisma Accelerate for connection pooling.
-* **100,000 Users:** AI API rate limits (Gemini 15 Requests Per Minute on free tier) and Serverless function timeouts. *Solution:* Enterprise API tiers, streaming responses to keep connections alive, and moving PDF processing to dedicated worker dynos (e.g., AWS SQS + ECS) instead of Next.js serverless functions.
+* **100,000 Users:** AI API rate limits (Gemini 15 Requests Per Minute on free tier) and EC2 CPU saturation. *Solution:* Enterprise API tiers, migrating from a single `t3.micro` to an AWS Auto Scaling Group behind an Application Load Balancer, and upgrading the Redis + BullMQ queue to AWS SQS + ECS worker clusters.
 
 ### Deployment Flow
 
-1. **Frontend/Backend:** Pushed to GitHub -> Vercel detects change -> Builds Next.js -> Deploys to Edge/Serverless.
-2. **Database:** Hosted on AWS RDS / Supabase. Migrations run automatically via GitHub Actions (`npx prisma migrate deploy`) before the Vercel build finishes.
+1. **Frontend/Backend:** Code is pushed to GitHub. We SSH into the AWS EC2 instance, run `git pull`, and execute `npm run build`. The Node server is restarted gracefully using `pm2 reload`.
+2. **Database:** Hosted on AWS RDS / Supabase. Migrations are run manually via `npx prisma migrate deploy` prior to rebuilding the Next.js application.
 
 ### Errors Faced During Deployment
 
@@ -235,7 +235,7 @@ BullMQ running on Redis gives us out-of-the-box features that detached Next.js p
 ### Section A: NoteSage Specific & Architecture (10 Questions)
 
 **Q1: Why did you choose Next.js Server Actions over building a separate REST API in Express or NestJS?**
-*Answer:* I chose a modern monolithic architecture to reduce architectural friction. Server Actions provide end-to-end type safety between the client and database without needing code-generation tools like OpenAPI. It simplifies deployment to a single Vercel instance and eliminates CORS issues, while allowing me to easily handle loading states via React's `useTransition`.
+*Answer:* I chose a modern monolithic architecture to reduce architectural friction. Server Actions provide end-to-end type safety between the client and database without needing code-generation tools like OpenAPI. It simplifies deployment to a single AWS EC2 instance and eliminates CORS issues, while allowing me to easily handle loading states via React's `useTransition`.
 
 **Q2: Walk me through the exact lifecycle of a user asking a question in your Doc Chat.**
 *Answer:* First, we use the LLM to rewrite the user's input into a "Standalone Question" so it doesn't lose context. Then, we pass that question to the Gemini Embedding API to convert it into a 3072-dimension vector. Next, we run a **Hybrid Search** in PostgreSQL: we simultaneously run a semantic vector search using `pgvector` (cosine distance) AND a full-text keyword search (`to_tsvector`). We merge the results using the Reciprocal Rank Fusion (RRF) mathematical formula to get the top 5 most relevant chunks. Finally, we inject those chunks into a system prompt and stream the Gemini 1.5 model's answer back to the UI.
@@ -265,7 +265,7 @@ BullMQ running on Redis gives us out-of-the-box features that detached Next.js p
 *Answer:* I would frame it as a constraint satisfaction problem. The inputs are the Exam Date, the user's available study hours per week, and the volume of chapters in the Document. The algorithm would divide the total document chunks by the available days, creating a `StudyTask` row in the database for each milestone. I would use a cron job to check `StudyTask` statuses and send email reminders.
 
 **Q10: What was the hardest bug you faced while building NoteSage and how did you solve it?**
-*Answer:* (Provide your personal experience here—a common one is resolving hydration mismatches in Next.js when dealing with Dark/Light theme toggles, which is solved by suppressing hydration warnings or mounting components only after `useEffect`, or dealing with Vercel's 10-second timeout on Server Actions by implementing async job queues).
+*Answer:* (Provide your personal experience here—a common one is resolving hydration mismatches in Next.js when dealing with Dark/Light theme toggles, which is solved by suppressing hydration warnings or mounting components only after `useEffect`, or dealing with Node.js event-loop blocking on heavy PDF processing by implementing independent PM2 background workers and Redis queues).
 
 **Q11: How do you handle PDFs that are purely scanned images or in unsupported languages like Hindi?**
 *Answer:* I implemented a Multimodal AI OCR Fallback. Initially, we attempt to use a standard local PDF parser because it is free and fast. If the parser extracts almost zero text, our code detects this failure and routes the raw binary file directly to Google's Gemini 1.5 Flash Vision engine. We bypass traditional, brittle OCR engines like Tesseract entirely. By using strict Regex prompt engineering (e.g., instructing the AI to inject `[PAGE_X_START]`), we extract the text perfectly while preserving page number metadata for our citation system.
