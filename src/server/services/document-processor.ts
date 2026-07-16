@@ -28,6 +28,7 @@ if (typeof global !== "undefined") {
 
 export async function processDocument(documentId: string) {
   console.log(`[Processor] Starting document processing for ${documentId}`);
+  let s3KeyToClean = "";
 
   try {
     const document = await db.document.findUnique({
@@ -37,6 +38,8 @@ export async function processDocument(documentId: string) {
     if (!document) {
       throw new Error("Document not found");
     }
+
+    s3KeyToClean = document.s3Key;
 
     if (!process.env.S3_BUCKET_NAME) {
       throw new Error("S3_BUCKET_NAME not configured");
@@ -63,12 +66,61 @@ export async function processDocument(documentId: string) {
         const response = await fetch(fileUrl);
         if (!response.ok) throw new Error("Failed to fetch file from S3");
         const blob = await response.blob();
-        const loader = new WebPDFLoader(blob);
-        return loader.load();
+        
+        let loaderDocs: any[] = [];
+        try {
+          const loader = new WebPDFLoader(blob);
+          loaderDocs = await loader.load();
+        } catch (e) {
+          console.warn("[Processor] WebPDFLoader failed parsing completely. Will fallback to AI OCR.");
+        }
+
+        const totalText = loaderDocs.map(d => d.pageContent).join("").trim();
+        if (totalText.length < 50) {
+          console.log("[Processor] Standard extraction failed (0 or low text). Falling back to Gemini Multimodal OCR...");
+          const { GoogleGenerativeAI } = await import("@google/genai");
+          const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+          if (!apiKey) throw new Error("Missing Gemini API key for OCR fallback");
+          
+          const genAI = new GoogleGenerativeAI({ apiKey });
+          
+          const arrayBuffer = await blob.arrayBuffer();
+          const base64Data = Buffer.from(arrayBuffer).toString("base64");
+          
+          const prompt = "You are an expert OCR engine. Extract every word of this document exactly as written, in its original language. To preserve citation metadata, you MUST wrap every single page in [PAGE_X_START] and [PAGE_X_END] tags (e.g., [PAGE_1_START] text... [PAGE_1_END]). Do not add any conversational text or formatting outside of the original text.";
+          
+          const result = await genAI.models.generateContent({
+            model: "gemini-1.5-flash",
+            contents: [
+              {
+                role: "user",
+                parts: [
+                  { inlineData: { data: base64Data, mimeType: "application/pdf" } },
+                  { text: prompt }
+                ]
+              }
+            ]
+          });
+          
+          const ocrText = result.text || "";
+          
+          // Reconstruct pseudo-LangChain documents
+          const pages = ocrText.split(/\[PAGE_\d+_START\]/g).filter(p => p.trim());
+          
+          loaderDocs = pages.map((pageText, idx) => {
+              const cleanText = pageText.replace(/\[PAGE_\d+_END\]/g, "").trim();
+              return {
+                  pageContent: cleanText,
+                  metadata: { loc: { pageNumber: idx + 1 } }
+              };
+          }).filter(d => d.pageContent.length > 0);
+        }
+
+        return loaderDocs;
       });
       
       if (!textDocs || textDocs.length === 0) {
-        throw new Error("No text extracted from document");
+        throw new Error("No text extracted from document after AI fallback");
       }
 
       // Pass the raw documents directly to the splitter so they retain their native pageNumber metadata!
@@ -108,7 +160,16 @@ export async function processDocument(documentId: string) {
         where: { id: documentId },
         data: { title: `ERR: ${error?.message || "Unknown processing error"}`.substring(0, 200) }
       });
-    } catch (e) {} // ignore if db fails here
+
+      if (s3KeyToClean && process.env.S3_BUCKET_NAME) {
+        const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
+        await s3Client.send(new DeleteObjectCommand({
+           Bucket: process.env.S3_BUCKET_NAME,
+           Key: s3KeyToClean
+        }));
+        console.log(`[Processor] Cleaned up orphaned file from S3: ${s3KeyToClean}`);
+      }
+    } catch (e) {} // ignore if db or s3 fails here
     throw error;
   }
 }
