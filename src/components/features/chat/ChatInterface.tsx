@@ -3,10 +3,17 @@
 import { Send, Sparkles, StopCircle, ArrowUp, BookOpen } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 
+type Citation = {
+  documentId: string;
+  documentTitle: string;
+  pageNumber: number;
+};
+
 type Message = {
   id: string;
   role: "user" | "assistant" | "model";
   content: string;
+  sources?: Citation[];
 };
 
 export function ChatInterface() {
@@ -78,7 +85,18 @@ export function ChatInterface() {
       let aiContent = "";
       const aiMessageId = (Date.now() + 1).toString();
 
-      setMessages((prev) => [...prev, { id: aiMessageId, role: "assistant", content: "" }]);
+      const citationsHeader = response.headers.get("x-citations");
+      let parsedCitations: Citation[] = [];
+      if (citationsHeader) {
+        try {
+          const decoded = atob(citationsHeader);
+          parsedCitations = JSON.parse(decoded);
+        } catch (e) {
+          console.error("Failed to parse citations", e);
+        }
+      }
+
+      setMessages((prev) => [...prev, { id: aiMessageId, role: "assistant", content: "", sources: parsedCitations }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -203,6 +221,21 @@ export function ChatInterface() {
                     <p className="text-body-md text-on-surface-variant leading-relaxed whitespace-pre-wrap">
                       {m.content}
                     </p>
+                    {m.sources && m.sources.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2 pt-3 border-t border-outline-variant/30">
+                        {Array.from(new Set(m.sources.map(s => `Page ${s.pageNumber}`)))
+                          .sort((a, b) => parseInt(a.replace('Page ', '')) - parseInt(b.replace('Page ', '')))
+                          .map((sourceText) => (
+                            <span 
+                              key={sourceText}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/10 text-secondary border border-secondary/20 text-xs font-medium"
+                            >
+                              <BookOpen className="w-3 h-3" />
+                              {sourceText}
+                            </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )

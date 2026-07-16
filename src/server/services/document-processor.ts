@@ -50,7 +50,12 @@ export async function processDocument(documentId: string) {
     });
     const fileUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
 
-    let extractedText = "";
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+    });
+
+    let splitDocs: any[] = [];
 
     if (document.type === "PDF") {
       const { WebPDFLoader } = await import("@langchain/community/document_loaders/web/pdf");
@@ -61,29 +66,30 @@ export async function processDocument(documentId: string) {
         const loader = new WebPDFLoader(blob);
         return loader.load();
       });
-      extractedText = textDocs.map((doc: any) => doc.pageContent).join("\n\n");
+      
+      if (!textDocs || textDocs.length === 0) {
+        throw new Error("No text extracted from document");
+      }
+
+      // Pass the raw documents directly to the splitter so they retain their native pageNumber metadata!
+      splitDocs = await splitter.splitDocuments(textDocs);
     } else {
       // Plain text
-      extractedText = await retryWithBackoff(async () => {
+      const extractedText = await retryWithBackoff(async () => {
         const response = await fetch(fileUrl);
         if (!response.ok) throw new Error("Failed to fetch file from S3");
         return response.text();
       });
+
+      if (!extractedText?.trim()) {
+        throw new Error("No text extracted from document");
+      }
+
+      splitDocs = await splitter.createDocuments(
+        [extractedText],
+        [{ loc: { pageNumber: 1 } }]
+      );
     }
-
-    if (!extractedText?.trim()) {
-      throw new Error("No text extracted from document");
-    }
-
-    const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 200,
-    });
-
-    const splitDocs = await splitter.createDocuments(
-      [extractedText],
-      [{ loc: { pageNumber: 1 } }]
-    );
 
     console.log(`[Processor] Split document into ${splitDocs.length} chunks`);
 

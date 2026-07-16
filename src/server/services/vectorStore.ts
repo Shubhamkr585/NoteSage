@@ -18,20 +18,27 @@ export async function storeChunksInVectorDb(documentId: string, chunks: any[]) {
   console.log(`[VectorStore] Embedding generation completed for ${count} chunks.`);
   console.log(`[VectorStore] Starting transactional storage of ${count} chunks to pgvector...`);
 
-  const insertPromises = chunks.map((chunk, index) => {
+  const insertPromises: any[] = [];
+  
+  chunks.forEach((chunk, index) => {
+    const vector = vectors[index];
+    if (!vector || vector.length === 0) {
+      console.warn(`[VectorStore] Skipping chunk ${index} due to empty embedding.`);
+      return;
+    }
+
     const content = chunk.pageContent as string;
     const pageNumber: number = chunk.metadata?.loc?.pageNumber ?? 1;
-    const vector = vectors[index];
     const vectorString = `[${vector.join(",")}]`;
 
-    return db.$executeRawUnsafe(
+    insertPromises.push(db.$executeRawUnsafe(
       `INSERT INTO "DocumentChunk" (id, "documentId", content, "pageNumber", embedding)
        VALUES (gen_random_uuid(), $1, $2, $3, $4::vector)`,
       documentId,
       content,
       pageNumber,
       vectorString
-    );
+    ));
   });
 
   await retryWithBackoff(() => db.$transaction(insertPromises, { timeout: 30000 }));
