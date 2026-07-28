@@ -8,7 +8,7 @@
  */
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
-  retries = 3,
+  retries = 4,
   delay = 1000,
   backoffFactor = 2
 ): Promise<T> {
