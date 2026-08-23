@@ -133,7 +133,6 @@ Standard PDF parsing libraries (like `pdfjs-dist` or `WebPDFLoader`) frequently 
 * *Solution:* We decoupled the upload from the processing. The client uploads directly to S3 via a Pre-signed URL. We then trigger a background worker process (running independently via PM2) to process the PDF asynchronously, keeping the main web server extremely fast.
 * *Error:* Vector searches frequently missed exact acronyms (e.g., "CPU").
 * *Solution:* We implemented the Hybrid Search (RRF) detailed above, combining semantic vector similarity with hard keyword matching (`to_tsquery`), drastically improving retrieval precision.
-
 * *Error:* The Gemini Embeddings API silently failed and returned empty arrays when we attempted to batch-process 50 document chunks at once, resulting in 0 rows being inserted into `pgvector` without throwing an application error.
 * *Solution:* We rewrote the `vectorStore.ts` insertion engine to process and embed chunks **sequentially** (one-by-one) instead of parallel batching. This bypasses API payload token limits, ensures every chunk is successfully verified, and prevents silent data loss.
 
@@ -259,7 +258,7 @@ BullMQ running on Redis gives us out-of-the-box features that detached Next.js p
 *Answer:* We utilize system-level roles in the Gemini API. The dynamic user input is strictly placed in the `user` message array, while instructions on how to behave are locked in the `system` configuration. We also instruct the LLM: "Answer using ONLY the provided context. If the answer is not there, say you do not know."
 
 **Q8: Explain how you designed your authentication system.**
-*Answer:* I used Better Auth backed by Prisma. It relies on secure, HTTP-only, SameSite=Lax cookies to store session tokens. This inherently protects against Cross-Site Scripting (XSS) attacks because JavaScript cannot access the cookie, unlike storing JWTs in `localStorage`.
+*Answer:* I used Better Auth backed by Prisma. It relies on secure, HTTPS-only, SameSite=Lax cookies to store session tokens. This inherently protects against Cross-Site Scripting (XSS) attacks because JavaScript cannot access the cookie, unlike storing JWTs in `localStorage`.
 
 **Q9: If you were to implement the Study Planner scheduling algorithm, how would you approach it?**
 *Answer:* I would frame it as a constraint satisfaction problem. The inputs are the Exam Date, the user's available study hours per week, and the volume of chapters in the Document. The algorithm would divide the total document chunks by the available days, creating a `StudyTask` row in the database for each milestone. I would use a cron job to check `StudyTask` statuses and send email reminders.

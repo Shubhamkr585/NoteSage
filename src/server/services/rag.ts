@@ -64,11 +64,11 @@ export async function retrieveChunks(userId: string, query: string, limit: numbe
         c."pageNumber",
         d."title" as "documentTitle",
         d."id" as "documentId",
-        RANK() OVER (ORDER BY ts_rank(to_tsvector('english', c."content"), plainto_tsquery('english', ${query})) DESC) as keyword_rank
+        RANK() OVER (ORDER BY ts_rank(c."fts_vector", plainto_tsquery('english', ${query})) DESC) as keyword_rank
       FROM "DocumentChunk" c
       JOIN "Document" d ON c."documentId" = d."id"
       WHERE d."userId" = ${userId}
-        AND to_tsvector('english', c."content") @@ plainto_tsquery('english', ${query})
+        AND c."fts_vector" @@ plainto_tsquery('english', ${query})
       LIMIT 20
     )
     SELECT 
